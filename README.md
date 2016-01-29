@@ -3,6 +3,12 @@ Language Common
 
 Common and generic expressions and operations for [OpenFn](http://openfn.org).
 
+Documentation
+-------------
+
+[Docs](docs/index)
+
+
 Development
 -----------
 

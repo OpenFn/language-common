@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "JSONPath": "^0.10.0",
-    "lodash-fp": "^0.10.2"
+    "lodash-fp": "^0.10.3"
   },
   "devDependencies": {
     "assertion-error": "^1.0.1",

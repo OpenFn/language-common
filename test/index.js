@@ -2,7 +2,8 @@ import { expect } from 'chai';
 import testData from './testData';
 
 import {
-  execute, each, join, source, sourceValue, map, combine
+  execute, each, join, source, sourceValue, map, combine, field, fields,
+  expandReferences
 } from '../src';
 
 describe("execute", () => {
@@ -152,5 +153,33 @@ describe("join", () => {
       "price": 8.95,
       "title": "Sayings of the Century"
     })
+  })
+})
+
+describe("expandReferences", () => {
+  it("resolves function values on objects", () => {
+    let result = expandReferences({
+      a: (s) => { return s },
+      b: 2,
+      c: 3
+    })(1)
+
+    expect(result).to.eql( {
+      a: 1, b: 2, c: 3
+    })
+  })
+})
+
+describe("field", () => {
+  it("returns a pair", () => {
+    expect(field("a", 1)).to.eql(["a", 1])
+  })
+})
+
+describe("fields", () => {
+  it("returns an object", () => {
+    expect(
+      fields([ "a", 1 ], [ "b", 2 ])
+    ).to.eql({ "a": 1, "b": 2 })
   })
 })

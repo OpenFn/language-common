@@ -1,4 +1,4 @@
-import { curry, merge, reduce, zipObject } from 'lodash-fp';
+import { curry, merge, reduce, zipObject, mapValues } from 'lodash-fp';
 import JSONPath from 'JSONPath';
 
 /**
@@ -179,3 +179,42 @@ export function join(targetPath, sourcePath, targetKey) {
   }
 }
 
+/**
+ * Resolves function values.
+ * @experimental this is likely to change
+ * @constructor
+ * @param {object} obj - data
+ * @returns {<Operation>}
+ */
+export function expandReferences(obj) {
+  return state => {
+    return mapValues(function(value) {
+      return typeof value == 'function' ? value(state) : value;
+    })(obj); 
+  }
+}
+
+/**
+ * Returns a key, value pair in an array.
+ * @constructor
+ * @param {string} key - Name of the field
+ * @param {Value} value - The value itself or a sourceable operation.
+ * @returns {<Field>}
+ */
+export function field(key, value) {
+  return [ key, value ]
+}
+
+/**
+ * Zips key value pairs into an object.
+ * @example <caption>Example</caption>
+ * create("SObject",
+ *   field("FirstName", sourceValue("$.firstName"))
+ * )
+ * @constructor
+ * @param {...fields} fields - List of fields
+ * @returns {object}
+ */
+export function fields(...fields) {
+  return zipObject(fields,null)
+}

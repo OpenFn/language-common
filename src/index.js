@@ -128,25 +128,29 @@ function asData(data, state) {
  *   )
  * )
  * @constructor
- * @param {string} path - JSONPath referencing a point in `state`.
+ * @param {<Source>} dataSource - JSONPath referencing a point in `state`.
  * @param {function} operation - The operation needed to be repeated.
  * @returns {<Operation>}
  */
-export function each(path, operation) {
-  if (!path) {
-    throw new TypeError("path argument for each expression is invalid.")
+export function each(dataSource, operation) {
+  if (!dataSource) {
+    throw new TypeError("dataSource argument for each operation is invalid.")
   }
 
   return (state) => {
-    return asData(path,state).reduce(function(state, data) {
-      if (state.then) {
-        return state.then((state) => {
-          return operation({ ...state, data })
-        })
-      } else {
-        return operation({ ...state, data })
-      }
-    }, state)
+    return asData(dataSource,state).
+      reduce(
+        (state, data, index) => {
+          if (state.then) {
+            return state.then((state) => {
+              return operation({ ...state, data, index })
+            })
+          } else {
+            return operation({ ...state, data, index })
+          }
+        },
+        state
+      )
 
   }
 }

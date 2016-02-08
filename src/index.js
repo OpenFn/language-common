@@ -55,6 +55,50 @@ export function source(path) {
 }
 
 /**
+ * Ensures a path points at the data. 
+ * @constructor
+ * @param {string} path - JSONPath referencing a point in `data`.
+ * @returns {string}
+ */
+export function dataPath(path) {
+  // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
+  // path starts with `$.data.`
+  const cleanPath = path.match(/^[\$\.]*(.+)/)[1]
+  return "$.data.".concat(cleanPath)
+}
+
+/**
+ * Picks out a single value from source data.
+ * If a JSONPath returns more than one value for the reference, the first
+ * item will be returned.
+ * @constructor
+ * @param {String} path - JSONPath referencing a point in `data`.
+ * @returns {<Operation>}
+ */
+export function dataValue(path) {
+  return sourceValue(dataPath(path))
+}
+
+/**
+ * Ensures a path points at references. 
+ * @constructor
+ * @param {string} path - JSONPath referencing a point in `references`.
+ * @returns {string}
+ */
+export function referencePath(path) {
+  // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
+  // path starts with `$.data.`
+  const cleanPath = path.match(/^[\$\.]*(.+)/)[1]
+  return "$.references".concat(cleanPath)
+}
+
+export function lastReferenceValue(path) {
+  const lastReferencePath = referencePath("[0]".concat(".",path))
+
+  return sourceValue(lastReferencePath)
+}
+
+/**
  * Scopes an array of data based on a JSONPath.
  * Useful when the source data has `n` items you would like to map to
  * an operation.

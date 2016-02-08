@@ -3,7 +3,7 @@ import testData from './testData';
 
 import {
   execute, each, join, source, sourceValue, map, combine, field, fields,
-  expandReferences, merge
+  expandReferences, merge, dataPath, dataValue, referencePath, lastReferenceValue
 } from '../src';
 
 describe("execute", () => {
@@ -229,5 +229,40 @@ describe("merge", () => {
     expect(result[2].price).to.eql(19.95)
     expect(result[3].price).to.eql(19.95)
 
+  })
+})
+
+describe("Path Helpers", () => {
+  describe("dataPath", () => {
+    it("prepends source data paths with $.data", () => {
+      expect(dataPath("data.hello")).to.eql("$.data.data.hello")
+      expect(dataPath("$.data.hello")).to.eql("$.data.data.hello")
+      expect(dataPath("[0].foo")).to.eql("$.data[0].foo")
+    })
+  })
+  describe("dataValue", () => {
+    it("references a given path inside $.data", () => {
+      let value = dataValue("store.bicycle.color")({ data: testData });
+      expect(value).to.eql("red");
+    })
+  })
+  describe("referencePath", () => {
+    it("prepends a paths with $.references", () => {
+      expect(referencePath("[0]")).to.eql("$.references[0]");
+    })
+
+  })
+  describe("lastReferenceValue", () => {
+    it("returns the last reference in `state.references`", () => {
+      expect(
+        lastReferenceValue("foo")({
+          references: [
+            { foo: 'bar' },
+            { baz: 'foo' }
+          ]
+        })
+      ).to.eql('bar');
+
+    })
   })
 })

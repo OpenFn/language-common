@@ -3,7 +3,7 @@ import testData from './testData';
 
 import {
   execute, each, join, source, sourceValue, map, combine, field, fields,
-  expandReferences
+  expandReferences, merge
 } from '../src';
 
 describe("execute", () => {
@@ -37,7 +37,7 @@ describe("execute", () => {
 
 describe("sourceValue", () => {
   it("references a given path", () => {
-    let value = sourceValue("$.store.bicycle.color", testData);
+    let value = sourceValue("$.store.bicycle.color")(testData);
     expect(value).to.eql("red");
   })
 })
@@ -204,5 +204,30 @@ describe("fields", () => {
     expect(
       fields([ "a", 1 ], [ "b", 2 ])
     ).to.eql({ "a": 1, "b": 2 })
+  })
+})
+
+describe("merge", () => {
+  it("merges in a set of fields from data, for an array of sources", () => {
+    let result = (
+      merge(
+        "$.store.book[*]",
+        fields(
+          field("color", sourceValue("$.store.bicycle.color")),
+          field("price", sourceValue("$.store.bicycle.price"))
+        )
+      )(testData)
+    )
+
+    expect(result[0].color).to.eql("red")
+    expect(result[1].color).to.eql("red")
+    expect(result[2].color).to.eql("red")
+    expect(result[3].color).to.eql("red")
+
+    expect(result[0].price).to.eql(19.95)
+    expect(result[1].price).to.eql(19.95)
+    expect(result[2].price).to.eql(19.95)
+    expect(result[3].price).to.eql(19.95)
+
   })
 })

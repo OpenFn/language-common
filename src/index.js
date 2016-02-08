@@ -1,4 +1,4 @@
-import { curry, merge, reduce, zipObject, mapValues } from 'lodash-fp';
+import { curry, reduce, zipObject, mapValues } from 'lodash-fp';
 import JSONPath from 'JSONPath';
 
 /**
@@ -31,12 +31,13 @@ export function execute(...operations) {
  * item will be returned.
  * @constructor
  * @param {String} path - JSONPath referencing a point in `state`.
- * @param {State} state - Runtime state.
- * @returns {String}
+ * @returns {<Operation>}
  */
-export const sourceValue = curry(function(path, state) {
-  return JSONPath.eval(state, path)[0];
-});
+export function sourceValue(path) {
+  return state => {
+    return JSONPath.eval(state, path)[0]
+  }
+}
 
 /**
  * Picks out a value from source data.
@@ -178,7 +179,7 @@ export function combine(...operations) {
 export function join(targetPath, sourcePath, targetKey) {
   return (state) => {
     return source(targetPath)(state).map((i) => {
-      return { [targetKey]: sourceValue(sourcePath, state), ...i }
+      return { [targetKey]: sourceValue(sourcePath)(state), ...i }
     })
   }
 }
@@ -221,4 +222,32 @@ export function field(key, value) {
  */
 export function fields(...fields) {
   return zipObject(fields,null)
+}
+
+/**
+ * Merges fields into each item in an array.
+ * @example <caption>Copy publisher into every book.</caption>
+ * merge(
+ *   "$.books[*]",
+ *   fields(
+ *     field( "publisher", sourceValue("$.publisher") )
+ *   )
+ * )
+ * @constructor
+ * @param {<DataSource>} dataSource
+ * @param {object} fields - Group of fields to merge in.
+ * @returns {<DataSource>}
+ */
+export function merge(dataSource, fields) {
+  return state => {
+
+    const initialData = source(dataSource)(state)
+    const additionalData = expandReferences(fields)(state)
+
+    return (
+      initialData.reduce( (acc, dataItem) => {
+        return [ ...acc, { ...dataItem, ...additionalData } ]
+      }, [] )
+    )
+  };
 }

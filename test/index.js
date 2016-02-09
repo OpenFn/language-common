@@ -3,7 +3,8 @@ import testData from './testData';
 
 import {
   execute, each, join, source, sourceValue, map, combine, field, fields,
-  expandReferences, merge, dataPath, dataValue, referencePath, lastReferenceValue
+  expandReferences, merge, dataPath, dataValue, referencePath, 
+  lastReferenceValue, index
 } from '../src';
 
 describe("execute", () => {
@@ -264,5 +265,21 @@ describe("Path Helpers", () => {
       ).to.eql('bar');
 
     })
+  })
+})
+
+describe("index", () => {
+
+  it("returns the current index value of an item in `each`", () => {
+    let operation = (state) => {
+      return { ...state, references: [ ...state.references, index()(state) ] }
+    }
+
+    let results = each("$.data.store.book[*]", operation)({
+      references: [], data: testData
+    })
+
+    expect(results.references).to.eql([0,1,2,3])
+
   })
 })

@@ -295,3 +295,15 @@ export function merge(dataSource, fields) {
     )
   };
 }
+
+/**
+ * Returns the index of the current array being iterated.
+ * To be used with `each` as a data source.
+ * @constructor
+ * @returns {<DataSource>}
+ */
+export function index() {
+  return state => {
+    return state.index
+  }
+}

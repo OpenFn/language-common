@@ -307,3 +307,21 @@ export function index() {
     return state.index
   }
 }
+
+/**
+ * Turns an array into a string, separated by X.
+ * @constructor
+ * @returns {<DataSource>}
+ * 
+ *  field("destination_string__c", function(state) {
+ *    return Array.apply(
+ *      null, dataValue("path_of_array")(state)
+ *    ).join(', ')
+ *  }),
+ * 
+ */
+export function arrayToString(array, separator) {
+  return Array.apply(
+    null, array (state)
+  ).join(separator)
+}

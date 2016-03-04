@@ -1,4 +1,5 @@
 import { curry, reduce, zipObject, mapValues } from 'lodash-fp';
+import Utils from './utils';
 import JSONPath from 'JSONPath';
 
 /**

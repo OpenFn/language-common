@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import Utils from '../src/utils';
+import { finalizeOperands } from '../src/utils';
 
 describe("Utils", function() {
   describe("finalizeOperands", function() {
 
     it("realises functions", function() {
       expect(
-        Utils.finalizeOperands(
+        finalizeOperands(
           () => 'foo', () => 'bar', 'baz',
             { a: () => 'quux' }
         )()
@@ -16,5 +16,4 @@ describe("Utils", function() {
 
   })
 
-}
-        )
+})

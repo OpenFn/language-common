@@ -182,20 +182,29 @@ export function each(dataSource, operation) {
     throw new TypeError("dataSource argument for each operation is invalid.")
   }
 
-  return (state) => {
-    return asData(dataSource,state).
-      reduce(
-        (state, data, index) => {
-          if (state.then) {
-            return state.then((state) => {
-              return operation({ ...state, data, index })
-            })
-          } else {
+  return (prevState) => {
+    
+    const items = asData(dataSource,prevState)
+    const nextState = items.reduce(
+      (state, data, index) => {
+        if (state.then) {
+          return state.then((state) => {
             return operation({ ...state, data, index })
-          }
-        },
-        state
-      )
+          })
+        } else {
+          return operation({ ...state, data, index })
+        }
+      },
+      prevState
+    )
+
+    // Ensure that the data this reducer was passed is returned to it's
+    // original state. But allow any other changes to be kept.
+    if (nextState.then) {
+      return nextState.then((nextState) => ( { ...nextState, data: prevState.data } ))
+    } else {
+      return ( { ...nextState, data: prevState.data } );
+    }
 
   }
 }

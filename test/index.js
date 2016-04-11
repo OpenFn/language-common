@@ -52,13 +52,13 @@ describe("source", () => {
 
 describe("each", () => {
 
-  let state
-  let operation = ({data, references}) => { return {
-    data, references: [data, ...references]
-  } }
+  let state, operation
 
   beforeEach(function() {
     state = { data: testData, references: [] }
+    operation = ({data, references}) => { return {
+      data, references: [data, ...references]
+    } }
   })
 
   it("maps the operation results in the references", () => {
@@ -110,12 +110,8 @@ describe("each", () => {
 
   it("returns data to it's original value afterwards", () => {
     
-    
-    return each( [1,2,3,4] , operation )(state)
-    .then((state) => {
-      expect(state.data).
-        to.eql(testData)
-    })
+    let results = each( [1,2,3,4] , operation )(state)
+    expect(results.data).to.eql(testData)
 
   })
 

@@ -313,11 +313,12 @@ export function index() {
  * @constructor
  * @returns {<DataSource>}
  *
+ * @example <caption>Array of Values to comma separated string.</caption>
  *  field("destination_string__c", function(state) {
- *    return Array.apply(null, dataValue("path_of_array")(state)).join(', ')
- *  }),
+ *    return arrayToString(dataValue("path_of_array")(state), ', ')
+ *  })
  *
  */
-export function arrayToString(arr, separator) {
+export function arrayToString(arr, separator='') {
   return Array.apply(null, arr).join(separator)
 }

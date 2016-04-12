@@ -4,7 +4,7 @@ import testData from './testData';
 import {
   execute, each, join, source, sourceValue, map, combine, field, fields,
   expandReferences, merge, dataPath, dataValue, referencePath, 
-  lastReferenceValue, index
+  lastReferenceValue, index, arrayToString
 } from '../src';
 
 describe("execute", () => {
@@ -282,4 +282,16 @@ describe("index", () => {
     expect(results.references).to.eql([0,1,2,3])
 
   })
+})
+
+describe("arrayToString", () => {
+
+  it("returns a comma separated string from an array", function() {
+    expect( arrayToString([1,2,3], ', ') ).to.eql("1, 2, 3")
+  })
+
+  it("does not require a separator", function() {
+    expect( arrayToString([1,2,3]) ).to.eql("123")
+  })
+
 })

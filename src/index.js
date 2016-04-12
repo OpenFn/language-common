@@ -312,7 +312,9 @@ export function index() {
 /**
  * Turns an array into a string, separated by X.
  * @constructor
- * @returns {<DataSource>}
+ * @param {array} arr - Array of toString'able primatives.
+ * @param {string} [separator=''] - Separator string.
+ * @returns {string}
  *
  * @example <caption>Array of Values to comma separated string.</caption>
  *  field("destination_string__c", function(state) {
@@ -322,4 +324,21 @@ export function index() {
  */
 export function arrayToString(arr, separator='') {
   return Array.apply(null, arr).join(separator)
+}
+
+/**
+ * Ensures primitive data types are wrapped in an array.
+ * Does not affect array objects.
+ * @constructor
+ * @param {any} arg - Data required to be in an array
+ * @returns {array}
+ *
+ * @example <caption>Ensure data is iterable.</caption>
+ * each(function(state) {
+ *   return toArray( dataValue("path_of_array")(state) )
+ * }, ...)
+ *
+ */
+export function toArray(arg) {
+  return new Array().concat(arg);
 }

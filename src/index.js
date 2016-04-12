@@ -5,7 +5,7 @@ export * as beta from './beta';
 /**
  * Execute a sequence of operations.
  * Main outer API for executing expressions.
- * @example 
+ * @example
  * execute(
  *   create('foo'),
  *   delete('bar')
@@ -56,7 +56,7 @@ export function source(path) {
 }
 
 /**
- * Ensures a path points at the data. 
+ * Ensures a path points at the data.
  * @constructor
  * @param {string} path - JSONPath referencing a point in `data`.
  * @returns {string}
@@ -81,7 +81,7 @@ export function dataValue(path) {
 }
 
 /**
- * Ensures a path points at references. 
+ * Ensures a path points at references.
  * @constructor
  * @param {string} path - JSONPath referencing a point in `references`.
  * @returns {string}
@@ -123,13 +123,13 @@ export const map = curry(function(path, operation, state) {
     case 'string':
       source(path)(state).map(function(data) {
         return operation({data, references: state.references});
-      });      
+      });
       return state
 
     case 'object':
       path.map(function(data) {
         return operation({data, references: state.references});
-      });      
+      });
       return state
 
   }
@@ -139,7 +139,7 @@ export const map = curry(function(path, operation, state) {
  * Simple switcher allowing other expressions to use either a JSONPath or
  * object literals as a data source.
  * @constructor
- * @param {string|object|function} data 
+ * @param {string|object|function} data
  * - JSONPath referencing a point in `state`
  * - Object Literal of the data itself.
  * - Function to be called with state.
@@ -154,7 +154,7 @@ export function asData(data, state) {
       return data
     case 'function':
       return data(state)
-  }        
+  }
 }
 
 /**
@@ -240,7 +240,7 @@ export function expandReferences(obj) {
   return state => {
     return mapValues(function(value) {
       return typeof value == 'function' ? value(state) : value;
-    })(obj); 
+    })(obj);
   }
 }
 
@@ -307,4 +307,19 @@ export function index() {
   return state => {
     return state.index
   }
+}
+
+/**
+ * Turns an array into a string, separated by X.
+ * @constructor
+ * @returns {<DataSource>}
+ *
+ * @example <caption>Array of Values to comma separated string.</caption>
+ *  field("destination_string__c", function(state) {
+ *    return arrayToString(dataValue("path_of_array")(state), ', ')
+ *  })
+ *
+ */
+export function arrayToString(arr, separator='') {
+  return Array.apply(null, arr).join(separator)
 }

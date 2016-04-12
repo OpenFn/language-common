@@ -4,7 +4,7 @@ import testData from './testData';
 import {
   execute, each, join, source, sourceValue, map, combine, field, fields,
   expandReferences, merge, dataPath, dataValue, referencePath, 
-  lastReferenceValue, index, arrayToString
+  lastReferenceValue, index, arrayToString, toArray
 } from '../src';
 
 describe("execute", () => {
@@ -197,7 +197,7 @@ describe("Path Helpers", () => {
   })
 })
 
-describe("index", () => {
+describe("index", function() {
 
   it("returns the current index value of an item in `each`", () => {
     let operation = (state) => {
@@ -213,7 +213,7 @@ describe("index", () => {
   })
 })
 
-describe("arrayToString", () => {
+describe("arrayToString", function() {
 
   it("returns a comma separated string from an array", function() {
     expect( arrayToString([1,2,3], ', ') ).to.eql("1, 2, 3")
@@ -223,4 +223,20 @@ describe("arrayToString", () => {
     expect( arrayToString([1,2,3]) ).to.eql("123")
   })
 
+})
+
+describe("toArray", function() {
+
+  it("leaves arrays untouched", function() {
+    expect( toArray([1,2,3]) ).to.eql([1,2,3])
+  } )
+
+  it("wraps objects in an array", function() {
+    expect( toArray({a: 1}) ).to.eql([{a: 1}])
+  } )
+
+  it("wraps strings in an array", function() {
+    expect( toArray('a') ).to.eql(['a'])
+  } )
+  
 })

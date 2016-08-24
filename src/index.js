@@ -27,6 +27,19 @@ export function execute(...operations) {
 }
 
 /**
+ * Does something.
+ * @constructor
+ * @param {Function} this is the function
+ * @param {State} state - Runtime state.
+ * @returns {<Operation>}
+ */
+ export function alterState(func) {
+   return state => {
+     return func(state)
+   }
+ }
+
+/**
  * Picks out a single value from source data.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.

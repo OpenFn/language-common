@@ -4,17 +4,18 @@ import testData from './testData';
 import {
   execute, each, join, source, sourceValue, map, combine, field, fields,
   expandReferences, merge, dataPath, dataValue, referencePath, 
-  lastReferenceValue, index, arrayToString, toArray
-} from '../src';
+  lastReferenceValue, index, arrayToString, toArray, beta
+} from '../lib';
+
 
 describe("execute", () => {
 
   it("executes each operation in sequence", (done) => {
     let state = {}
     let operations = [
-      (state) => { return {counter: 1} },
-      (state) => { return {counter: 2} },
-      (state) => { return {counter: 3} }
+      () => { return {counter: 1} },
+      () => { return {counter: 2} },
+      () => { return {counter: 3} }
     ]
 
     execute(...operations)(state)
@@ -53,24 +54,18 @@ describe("source", () => {
 describe("map", () => {
 
   xit("[DEPRECATED] can produce a one to one from an array", () => {
-    let items = [];
-
     let state = { data: testData, references: [] }
     let results = map('$.data.store.book[*]', 
-                      function(state) {
-                        console.log("hello");
-                        // console.log(JSON.stringify( state ));
-                        // items.push( { title: sourceValue("$.data.title", state) } )
-                        return { references: [1, ...state.references], ...state }
-                      }, state)
+      function(state) {
+        return { references: [1, ...state.references], ...state }
+      }, state)
 
-                      expect(results.references).to.eql([
-                        { "title": "Sayings of the Century" },
-                        { "title": "Sword of Honour" },
-                        { "title": "Moby Dick" },
-                        { "title": "The Lord of the Rings" }
-                      ])
-
+    expect(results.references).to.eql([
+      { "title": "Sayings of the Century" },
+      { "title": "Sword of Honour" },
+      { "title": "Moby Dick" },
+      { "title": "The Lord of the Rings" }
+    ])
   });
 
 })
@@ -79,8 +74,8 @@ describe("combine", () => {
 
   let state = { }
   let operations = [
-    (state) => { return { hello: 1 } },
-      (state) => { return { hello: state.hello + 5 } }
+    () => { return { hello: 1 } },
+    (state) => { return { hello: state.hello + 5 } }
   ]
 
 
@@ -239,4 +234,83 @@ describe("toArray", function() {
     expect( toArray('a') ).to.eql(['a'])
   } )
   
+})
+
+function shouldBehaveLikeEach(each) {
+
+  let state, operation;
+
+  beforeEach(function() {
+    state = { data: testData, references: [] }
+    operation = ({data, references}) => { return {
+      data, references: [data, ...references]
+    } }
+  })
+  it("maps the operation results in the references", () => {
+    let results = each( "$.data.store.book[*]", operation )(state)
+    expect(results.references.reverse()).to.eql(testData.store.book)
+  })
+
+  it("maps the operation results in the data", () => {
+    let results = each( testData.store.book, operation )(state)
+    expect(results.references.reverse()).to.eql(testData.store.book)
+  })
+
+  it("provides the current index on state", () => {
+
+    let operation = ({references, index}) => {
+      return { references: [ index, ...references ] }
+    }
+
+    let results = each( "$.data.store.book[*]", operation )(state)
+    expect(results.references).to.eql([3,2,1,0])
+  })
+
+  it("calls the data sourcing function", () => {
+    let sourcingFunction = (state) => {
+      return state.data.store.book
+    }
+
+    let results = each( sourcingFunction , operation )(state)
+    expect(results.references.reverse()).to.eql(testData.store.book)
+  })
+
+  it("resolves promise operations", () => {
+    let sourcingFunction = (state) => {
+      return state.data.store.book
+    }
+
+    operation = ({data, references}) => {
+      return Promise.resolve({
+        data, references: [data, ...references]
+      })
+    }
+
+    return each( sourcingFunction , operation )(state)
+    .then((state) => {
+      expect(state.references.reverse()).
+        to.eql(testData.store.book)
+    })
+  })
+
+  it("returns data to it's original value afterwards", () => {
+
+    let results = each( [1,2,3,4] , operation )(state)
+    expect(results.data).to.eql(testData)
+
+  })
+
+}
+
+
+describe("each", () => {
+
+  describe("current", function() {
+    shouldBehaveLikeEach(each)
+  })
+
+  describe("beta", function() {
+    shouldBehaveLikeEach(beta.each)
+  })
+
 })

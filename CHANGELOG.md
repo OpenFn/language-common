@@ -1,3 +1,9 @@
+v1.0.0
+======
+
+* Changed build system to Rollup.
+* Added deprecation warning to `each` operator.
+
 v0.0.4
 ======
 

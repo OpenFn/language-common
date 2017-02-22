@@ -61,7 +61,7 @@ function shouldBehaveLikeEach(each) {
 
   it("returns data to it's original value afterwards", () => {
 
-    let results = each( [1,2,3,4] , operation )(state)
+    let results = beta.each( [1,2,3,4] , operation )(state)
     expect(results.data).to.eql(testData)
 
   })

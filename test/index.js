@@ -3,7 +3,7 @@ import testData from './testData';
 
 import {
   execute, each, join, source, sourceValue, map, combine, field, fields,
-  expandReferences, merge, dataPath, dataValue, referencePath, 
+  expandReferences, merge, dataPath, dataValue, referencePath,
   lastReferenceValue, index, arrayToString, toArray
 } from '../src';
 
@@ -32,7 +32,7 @@ describe("execute", () => {
     let finalState = execute()(state)
 
     expect(finalState).to.eql(state)
-  
+
   })
 })
 
@@ -56,7 +56,7 @@ describe("map", () => {
     let items = [];
 
     let state = { data: testData, references: [] }
-    let results = map('$.data.store.book[*]', 
+    let results = map('$.data.store.book[*]',
                       function(state) {
                         console.log("hello");
                         // console.log(JSON.stringify( state ));
@@ -167,7 +167,10 @@ describe("Path Helpers", () => {
     it("prepends source data paths with $.data", () => {
       expect(dataPath("data.hello")).to.eql("$.data.data.hello")
       expect(dataPath("$.data.hello")).to.eql("$.data.data.hello")
-      expect(dataPath("[0].foo")).to.eql("$.data[0].foo")
+      // TODO: should we expect it to handle arrays like this...
+      // expect(dataPath("[0].foo")).to.eql("$.data[0].foo")
+      // Or like this...
+      expect(dataPath("[0].foo")).to.eql("$.data.[0].foo")
     })
   })
   describe("dataValue", () => {
@@ -238,5 +241,5 @@ describe("toArray", function() {
   it("wraps strings in an array", function() {
     expect( toArray('a') ).to.eql(['a'])
   } )
-  
+
 })

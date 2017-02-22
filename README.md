@@ -1,4 +1,4 @@
-Language Common
+Language Common [![Build Status](https://travis-ci.org/OpenFn/language-common.svg?branch=master)](https://travis-ci.org/OpenFn/language-common)
 ===============
 
 Common and generic expressions and operations for [OpenFn](http://openfn.org).

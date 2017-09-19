@@ -355,3 +355,11 @@ export function arrayToString(arr, separator='') {
 export function toArray(arg) {
   return new Array().concat(arg);
 }
+
+export function composeNextState(state, response) {
+    return {
+      ...state,
+      data: { response },
+      references: [ ...state.references, state.data ]
+    }
+}

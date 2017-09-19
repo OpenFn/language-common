@@ -359,7 +359,7 @@ export function toArray(arg) {
 export function composeNextState(state, response) {
     return {
       ...state,
-      data: { response },
+      data: response,
       references: [ ...state.references, state.data ]
     }
 }

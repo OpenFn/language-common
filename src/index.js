@@ -1,4 +1,4 @@
-import { curry, reduce, zipObject, mapValues } from 'lodash/fp';
+import { curry, reduce, fromPairs, mapValues } from 'lodash/fp';
 import JSONPath from 'JSONPath';
 export * as beta from './beta';
 
@@ -279,7 +279,7 @@ export function field(key, value) {
  * @returns {object}
  */
 export function fields(...fields) {
-  return zipObject(fields,null)
+  return fromPairs(fields)
 }
 
 /**

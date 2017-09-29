@@ -1,6 +1,6 @@
 {
   "name": "language-common",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Common Expressions for OpenFn",
   "main": "lib/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "JSONPath": "^0.10.0",
-    "lodash-fp": "^0.10.3"
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "assertion-error": "^1.0.1",

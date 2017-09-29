@@ -1,4 +1,4 @@
-import { curry, reduce, zipObject, mapValues } from 'lodash-fp';
+import { curry, reduce, zipObject, mapValues } from 'lodash/fp';
 import JSONPath from 'JSONPath';
 export * as beta from './beta';
 

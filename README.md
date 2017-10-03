@@ -3,12 +3,6 @@ Language Common [![Build Status](https://travis-ci.org/OpenFn/language-common.sv
 
 Common and generic expressions and operations for [OpenFn](http://openfn.org).
 
-Documentation
--------------
-
-[Docs](docs/index)
-
-
 Development
 -----------
 

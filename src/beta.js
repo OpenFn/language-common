@@ -8,17 +8,16 @@ import { asData } from './'
  *
  * It also ensures the results of an operation make their way back into
  * the state's references.
- *
- * @example <caption>Simple Example</caption>
- * each("$.[*]",
- *   create("SObject",
- *     field("FirstName", sourceValue("$.firstName"))
- *   )
- * )
- * @constructor
- * @param {<Source>} dataSource - JSONPath referencing a point in `state`.
- * @param {function} operation - The operation needed to be repeated.
- * @returns {<Operation>}
+ * @public
+ * @example
+ *  each("$.[*]",
+ *    create("SObject",
+ *    field("FirstName", sourceValue("$.firstName")))
+ *  )
+ * @function
+ * @param {DataSource} dataSource - JSONPath referencing a point in `state`.
+ * @param {Operation} operation - The operation needed to be repeated.
+ * @returns {Operation}
  */
 export function each(dataSource, operation) {
   if (!dataSource) {
@@ -26,7 +25,7 @@ export function each(dataSource, operation) {
   }
 
   return (prevState) => {
-    
+
     const items = asData(dataSource,prevState)
     const nextState = items.reduce(
       (state, data, index) => {
@@ -51,4 +50,3 @@ export function each(dataSource, operation) {
 
   }
 }
-

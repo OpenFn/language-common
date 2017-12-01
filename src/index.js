@@ -5,12 +5,13 @@ export * as beta from './beta';
 /**
  * Execute a sequence of operations.
  * Main outer API for executing expressions.
+ * @public
  * @example
- * execute(
- *   create('foo'),
- *   delete('bar')
- * )(state)
- * @constructor
+ *  execute(
+ *    create('foo'),
+ *    delete('bar')
+ *  )
+ * @function
  * @param {Operations} operations - Operations to be performed.
  * @returns {Promise}
  */
@@ -27,10 +28,12 @@ export function execute(...operations) {
 }
 
 /**
- * Does something.
- * @constructor
- * @param {Function} this is the function
- * @param {State} state - Runtime state.
+ * Runs a function using state.
+ * @public
+ * @example
+ *  alterState(callback)
+ * @function
+ * @param {Function} func is the function
  * @returns {<Operation>}
  */
  export function alterState(func) {
@@ -43,7 +46,10 @@ export function execute(...operations) {
  * Picks out a single value from source data.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.
- * @constructor
+ * @public
+ * @example
+ *  sourceValue('$.key')
+ * @function
  * @param {String} path - JSONPath referencing a point in `state`.
  * @returns {<Operation>}
  */
@@ -57,9 +63,11 @@ export function sourceValue(path) {
  * Picks out a value from source data.
  * Will return whatever JSONPath returns, which will always be an array.
  * If you need a single value use `sourceValue` instead.
- * @constructor
- * @param {string} path - JSONPath referencing a point in `state`.
- * @param {State} state - Runtime state.
+ * @public
+ * @example
+ *  source('$.key')
+ * @function
+ * @param {String} path - JSONPath referencing a point in `state`.
  * @returns {Array.<String|Object>}
  */
 export function source(path) {
@@ -70,7 +78,10 @@ export function source(path) {
 
 /**
  * Ensures a path points at the data.
- * @constructor
+ * @public
+ * @example
+ *  dataPath('key')
+ * @function
  * @param {string} path - JSONPath referencing a point in `data`.
  * @returns {string}
  */
@@ -85,7 +96,10 @@ export function dataPath(path) {
  * Picks out a single value from source data.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.
- * @constructor
+ * @public
+ * @example
+ *  dataValue('key')
+ * @function
  * @param {String} path - JSONPath referencing a point in `data`.
  * @returns {<Operation>}
  */
@@ -95,7 +109,10 @@ export function dataValue(path) {
 
 /**
  * Ensures a path points at references.
- * @constructor
+ * @public
+ * @example
+ *  referencePath('key')
+ * @function
  * @param {string} path - JSONPath referencing a point in `references`.
  * @returns {string}
  */
@@ -106,6 +123,15 @@ export function referencePath(path) {
   return "$.references".concat(cleanPath)
 }
 
+/**
+ * Picks out the last reference value from source data.
+ * @public
+ * @example
+ *  lastReferenceValue('key')
+ * @function
+ * @param {String} path - JSONPath referencing a point in `references`.
+ * @returns {<Operation>}
+ */
 export function lastReferenceValue(path) {
   const lastReferencePath = referencePath("[0]".concat(".",path))
 
@@ -118,13 +144,14 @@ export function lastReferenceValue(path) {
  * an operation.
  * The operation will receive a slice of the data based of each item
  * of the JSONPath provided.
- * @example <caption>Simple Map</caption>
+ * @public
+ * @example
  * map("$.[*]",
  *   create("SObject",
  *     field("FirstName", sourceValue("$.firstName"))
  *   )
  * )
- * @constructor
+ * @function
  * @param {string} path - JSONPath referencing a point in `state.data`.
  * @param {function} operation - The operation needed to be repeated.
  * @param {State} state - Runtime state.
@@ -151,11 +178,14 @@ export const map = curry(function(path, operation, state) {
 /**
  * Simple switcher allowing other expressions to use either a JSONPath or
  * object literals as a data source.
- * @constructor
- * @param {string|object|function} data
  * - JSONPath referencing a point in `state`
  * - Object Literal of the data itself.
  * - Function to be called with state.
+ * @public
+ * @example
+ *  asData('$.key'| key | callback)
+ * @function
+ * @param {String|object|function} data
  * @param {object} state - The current state.
  * @returns {array}
  */
@@ -179,16 +209,16 @@ export function asData(data, state) {
  *
  * It also ensures the results of an operation make their way back into
  * the state's references.
- *
- * @example <caption>Simple Example</caption>
+ * @public
+ * @example
  * each("$.[*]",
  *   create("SObject",
  *     field("FirstName", sourceValue("$.firstName"))
  *   )
  * )
- * @constructor
- * @param {<Source>} dataSource - JSONPath referencing a point in `state`.
- * @param {function} operation - The operation needed to be repeated.
+ * @function
+ * @param {DataSource} dataSource - JSONPath referencing a point in `state`.
+ * @param {Operation} operation - The operation needed to be repeated.
  * @returns {<Operation>}
  */
 export function each(dataSource, operation) {
@@ -216,9 +246,14 @@ export function each(dataSource, operation) {
 
 /**
  * Combines two operations into one
- * @constructor
- * @param {...operations} operations - Any unfufilled operation.
- * @returns {<Operation>}
+ * @public
+ * @example
+ *  combine(
+ *   create('foo'),
+ *   delete('bar')
+ * )
+ * @function
+ * @returns {Operation}
  */
 export function combine(...operations) {
   return (state) => {
@@ -234,6 +269,17 @@ export function combine(...operations) {
   }
 }
 
+/**
+ * Adds data from a target object
+ * @public
+ * @example
+ *  join('$.key','$.data','newKey')
+ * @function
+ * @param {String} targetPath - Target path
+ * @param {String} sourcePath - Source path
+ * @param {String} targetKey - Target Key
+ * @returns {<Operation>}
+ */
 export function join(targetPath, sourcePath, targetKey) {
   return (state) => {
     return source(targetPath)(state).map((i) => {
@@ -244,8 +290,8 @@ export function join(targetPath, sourcePath, targetKey) {
 
 /**
  * Resolves function values.
- * @experimental this is likely to change
- * @constructor
+ * @public
+ * @function
  * @param {object} obj - data
  * @returns {<Operation>}
  */
@@ -259,7 +305,10 @@ export function expandReferences(obj) {
 
 /**
  * Returns a key, value pair in an array.
- * @constructor
+ * @public
+ * @example
+ *  field('destination_field_name__c', 'value')
+ * @function
  * @param {string} key - Name of the field
  * @param {Value} value - The value itself or a sourceable operation.
  * @returns {<Field>}
@@ -270,13 +319,11 @@ export function field(key, value) {
 
 /**
  * Zips key value pairs into an object.
- * @example <caption>Example</caption>
- * create("SObject",
- *   field("FirstName", sourceValue("$.firstName"))
- * )
- * @constructor
- * @param {...fields} fields - List of fields
- * @returns {object}
+ * @public
+ * @example
+ *  fields(list_of_fields)
+ * @function
+ * @returns {Object}
  */
 export function fields(...fields) {
   return fromPairs(fields)
@@ -284,17 +331,18 @@ export function fields(...fields) {
 
 /**
  * Merges fields into each item in an array.
- * @example <caption>Copy publisher into every book.</caption>
+ * @public
+ * @example
  * merge(
  *   "$.books[*]",
  *   fields(
  *     field( "publisher", sourceValue("$.publisher") )
  *   )
  * )
- * @constructor
- * @param {<DataSource>} dataSource
- * @param {object} fields - Group of fields to merge in.
- * @returns {<DataSource>}
+ * @function
+ * @param {DataSource} dataSource
+ * @param {Object} fields - Group of fields to merge in.
+ * @returns {DataSource}
  */
 export function merge(dataSource, fields) {
   return state => {
@@ -313,7 +361,10 @@ export function merge(dataSource, fields) {
 /**
  * Returns the index of the current array being iterated.
  * To be used with `each` as a data source.
- * @constructor
+ * @public
+ * @example
+ *  index()
+ * @function
  * @returns {<DataSource>}
  */
 export function index() {
@@ -324,16 +375,15 @@ export function index() {
 
 /**
  * Turns an array into a string, separated by X.
- * @constructor
- * @param {array} arr - Array of toString'able primatives.
- * @param {string} [separator=''] - Separator string.
- * @returns {string}
- *
- * @example <caption>Array of Values to comma separated string.</caption>
+ * @public
+ * @example
  *  field("destination_string__c", function(state) {
  *    return arrayToString(dataValue("path_of_array")(state), ', ')
  *  })
- *
+ * @function
+ * @param {array} arr - Array of toString'able primatives.
+ * @param {string} [separator=''] - Separator string.
+ * @returns {string}
  */
 export function arrayToString(arr, separator='') {
   return Array.apply(null, arr).join(separator)
@@ -342,20 +392,29 @@ export function arrayToString(arr, separator='') {
 /**
  * Ensures primitive data types are wrapped in an array.
  * Does not affect array objects.
- * @constructor
+ * @public
+ * @example
+ *  each(function(state) {
+ *    return toArray( dataValue("path_of_array")(state) )
+ *  }, ...)
+ * @function
  * @param {any} arg - Data required to be in an array
  * @returns {array}
- *
- * @example <caption>Ensure data is iterable.</caption>
- * each(function(state) {
- *   return toArray( dataValue("path_of_array")(state) )
- * }, ...)
- *
  */
 export function toArray(arg) {
   return new Array().concat(arg);
 }
 
+/**
+ * Prepares next state
+ * @public
+ * @example
+ *  composeNextState(state, response)
+ * @function
+ * @param {State} state - state
+ * @param {Object} response - Response to be added
+ * @returns {State}
+ */
 export function composeNextState(state, response) {
     return {
       ...state,

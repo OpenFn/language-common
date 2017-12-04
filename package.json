@@ -1,6 +1,6 @@
 {
   "name": "language-common",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Common Expressions for OpenFn",
   "main": "lib/index.js",
   "scripts": {
@@ -11,7 +11,8 @@
   "author": "Open Function Group",
   "license": "LGPLv3",
   "files": [
-    "lib/"
+    "lib/",
+    "ast.json"
   ],
   "dependencies": {
     "JSONPath": "^0.10.0",

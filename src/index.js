@@ -422,3 +422,20 @@ export function composeNextState(state, response) {
       references: [ ...state.references, state.data ]
     }
 }
+
+/**
+ * Subsitutes underscores for spaces and proper-cases a string
+ * @public
+ * @example
+ *  field("destination_string__c", humanProper(state.data.path_to_string))
+ * @function
+ * @param {string} str - String that needs converting
+ * @returns {string}
+ */
+export function humanProper(str) {
+  if (typeof str == "string") {
+    return str.replace(/[_-]/g, " ").replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+  } else {
+    return str
+  }
+};

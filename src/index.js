@@ -16,15 +16,13 @@ export * as beta from './beta';
  * @returns {Promise}
  */
 export function execute(...operations) {
-
   return state => {
-    const start = Promise.resolve(state)
+    const start = Promise.resolve(state);
 
     return operations.reduce((acc, operation) => {
       return acc.then(operation);
-    }, start)
-
-  }
+    }, start);
+  };
 }
 
 /**
@@ -36,11 +34,11 @@ export function execute(...operations) {
  * @param {Function} func is the function
  * @returns {<Operation>}
  */
- export function alterState(func) {
-   return state => {
-     return func(state)
-   }
- }
+export function alterState(func) {
+  return state => {
+    return func(state);
+  };
+}
 
 /**
  * Picks out a single value from source data.
@@ -55,8 +53,8 @@ export function execute(...operations) {
  */
 export function sourceValue(path) {
   return state => {
-    return JSONPath.eval(state, path)[0]
-  }
+    return JSONPath.eval(state, path)[0];
+  };
 }
 
 /**
@@ -71,9 +69,9 @@ export function sourceValue(path) {
  * @returns {Array.<String|Object>}
  */
 export function source(path) {
-  return (state) => {
-    return JSONPath.eval(state, path)
-  }
+  return state => {
+    return JSONPath.eval(state, path);
+  };
 }
 
 /**
@@ -88,8 +86,8 @@ export function source(path) {
 export function dataPath(path) {
   // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
   // path starts with `$.data.`
-  const cleanPath = path.match(/^[\$\.]*(.+)/)[1]
-  return "$.data.".concat(cleanPath)
+  const cleanPath = path.match(/^[\$\.]*(.+)/)[1];
+  return '$.data.'.concat(cleanPath);
 }
 
 /**
@@ -104,7 +102,7 @@ export function dataPath(path) {
  * @returns {<Operation>}
  */
 export function dataValue(path) {
-  return sourceValue(dataPath(path))
+  return sourceValue(dataPath(path));
 }
 
 /**
@@ -119,8 +117,8 @@ export function dataValue(path) {
 export function referencePath(path) {
   // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
   // path starts with `$.data.`
-  const cleanPath = path.match(/^[\$\.]*(.+)/)[1]
-  return "$.references".concat(cleanPath)
+  const cleanPath = path.match(/^[\$\.]*(.+)/)[1];
+  return '$.references'.concat(cleanPath);
 }
 
 /**
@@ -133,9 +131,9 @@ export function referencePath(path) {
  * @returns {<Operation>}
  */
 export function lastReferenceValue(path) {
-  const lastReferencePath = referencePath("[0]".concat(".",path))
+  const lastReferencePath = referencePath('[0]'.concat('.', path));
 
-  return sourceValue(lastReferencePath)
+  return sourceValue(lastReferencePath);
 }
 
 /**
@@ -158,20 +156,18 @@ export function lastReferenceValue(path) {
  * @returns {<State>}
  */
 export const map = curry(function(path, operation, state) {
-
   switch (typeof path) {
     case 'string':
       source(path)(state).map(function(data) {
-        return operation({data, references: state.references});
+        return operation({ data, references: state.references });
       });
-      return state
+      return state;
 
     case 'object':
       path.map(function(data) {
-        return operation({data, references: state.references});
+        return operation({ data, references: state.references });
       });
-      return state
-
+      return state;
   }
 });
 
@@ -192,11 +188,11 @@ export const map = curry(function(path, operation, state) {
 export function asData(data, state) {
   switch (typeof data) {
     case 'string':
-      return source(data)(state)
+      return source(data)(state);
     case 'object':
-      return data
+      return data;
     case 'function':
-      return data(state)
+      return data(state);
   }
 }
 
@@ -223,25 +219,20 @@ export function asData(data, state) {
  */
 export function each(dataSource, operation) {
   if (!dataSource) {
-    throw new TypeError("dataSource argument for each operation is invalid.")
+    throw new TypeError('dataSource argument for each operation is invalid.');
   }
 
-  return (state) => {
-    return asData(dataSource,state).
-      reduce(
-        (state, data, index) => {
-          if (state.then) {
-            return state.then((state) => {
-              return operation({ ...state, data, index })
-            })
-          } else {
-            return operation({ ...state, data, index })
-          }
-        },
-        state
-      )
-
-  }
+  return state => {
+    return asData(dataSource, state).reduce((state, data, index) => {
+      if (state.then) {
+        return state.then(state => {
+          return operation({ ...state, data, index });
+        });
+      } else {
+        return operation({ ...state, data, index });
+      }
+    }, state);
+  };
 }
 
 /**
@@ -256,17 +247,17 @@ export function each(dataSource, operation) {
  * @returns {Operation}
  */
 export function combine(...operations) {
-  return (state) => {
-    return operations.reduce((state,operation) => {
+  return state => {
+    return operations.reduce((state, operation) => {
       if (state.then) {
-        return state.then((state) => {
-          return { ...state, ...operation(state) }
-        })
+        return state.then(state => {
+          return { ...state, ...operation(state) };
+        });
       } else {
-        return { ...state, ...operation(state) }
+        return { ...state, ...operation(state) };
       }
-    }, state)
-  }
+    }, state);
+  };
 }
 
 /**
@@ -281,11 +272,11 @@ export function combine(...operations) {
  * @returns {<Operation>}
  */
 export function join(targetPath, sourcePath, targetKey) {
-  return (state) => {
-    return source(targetPath)(state).map((i) => {
-      return { [targetKey]: sourceValue(sourcePath)(state), ...i }
-    })
-  }
+  return state => {
+    return source(targetPath)(state).map(i => {
+      return { [targetKey]: sourceValue(sourcePath)(state), ...i };
+    });
+  };
 }
 
 /**
@@ -300,7 +291,7 @@ export function expandReferences(obj) {
     return mapValues(function(value) {
       return typeof value == 'function' ? value(state) : value;
     })(obj);
-  }
+  };
 }
 
 /**
@@ -314,7 +305,7 @@ export function expandReferences(obj) {
  * @returns {<Field>}
  */
 export function field(key, value) {
-  return [ key, value ]
+  return [key, value];
 }
 
 /**
@@ -326,7 +317,7 @@ export function field(key, value) {
  * @returns {Object}
  */
 export function fields(...fields) {
-  return fromPairs(fields)
+  return fromPairs(fields);
 }
 
 /**
@@ -346,15 +337,12 @@ export function fields(...fields) {
  */
 export function merge(dataSource, fields) {
   return state => {
+    const initialData = source(dataSource)(state);
+    const additionalData = expandReferences(fields)(state);
 
-    const initialData = source(dataSource)(state)
-    const additionalData = expandReferences(fields)(state)
-
-    return (
-      initialData.reduce( (acc, dataItem) => {
-        return [ ...acc, { ...dataItem, ...additionalData } ]
-      }, [] )
-    )
+    return initialData.reduce((acc, dataItem) => {
+      return [...acc, { ...dataItem, ...additionalData }];
+    }, []);
   };
 }
 
@@ -369,8 +357,8 @@ export function merge(dataSource, fields) {
  */
 export function index() {
   return state => {
-    return state.index
-  }
+    return state.index;
+  };
 }
 
 /**
@@ -385,8 +373,8 @@ export function index() {
  * @param {string} [separator=''] - Separator string.
  * @returns {string}
  */
-export function arrayToString(arr, separator='') {
-  return Array.apply(null, arr).join(separator)
+export function arrayToString(arr, separator = '') {
+  return Array.apply(null, arr).join(separator);
 }
 
 /**
@@ -416,11 +404,11 @@ export function toArray(arg) {
  * @returns {State}
  */
 export function composeNextState(state, response) {
-    return {
-      ...state,
-      data: response,
-      references: [ ...state.references, state.data ]
-    }
+  return {
+    ...state,
+    data: response,
+    references: [...state.references, state.data],
+  };
 }
 
 /**
@@ -433,9 +421,11 @@ export function composeNextState(state, response) {
  * @returns {string}
  */
 export function humanProper(str) {
-  if (typeof str == "string") {
-    return str.replace(/[_-]/g, " ").replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+  if (typeof str == 'string') {
+    return str.replace(/[_-]/g, ' ').replace(/\w\S*/g, function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
   } else {
-    return str
+    return str;
   }
-};
+}

@@ -1,6 +1,6 @@
 {
   "name": "language-common",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Common Expressions for OpenFn",
   "main": "lib/index.js",
   "scripts": {

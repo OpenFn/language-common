@@ -45,10 +45,10 @@ describe('execute', () => {
       .catch(done);
   });
 
-  it('returns a function that returns state', () => {
+  it('returns a function that returns state', async function() {
     let state = {};
 
-    let finalState = execute()(state);
+    let finalState = await execute()(state);
 
     expect(finalState).to.eql(state);
   });

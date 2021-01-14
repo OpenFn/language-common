@@ -1,5 +1,5 @@
 import { curry, reduce, fromPairs, mapValues } from 'lodash/fp';
-import JSONPath from 'JSONPath';
+import {JSONPath} from 'jsonpath-plus';
 export * as beta from './beta';
 
 /**
@@ -53,7 +53,7 @@ export function alterState(func) {
  */
 export function sourceValue(path) {
   return state => {
-    return JSONPath.eval(state, path)[0];
+    return JSONPath({ path, json: state})[0];
   };
 }
 
@@ -70,7 +70,8 @@ export function sourceValue(path) {
  */
 export function source(path) {
   return state => {
-    return JSONPath.eval(state, path);
+
+    return JSONPath({ path, json: state});
   };
 }
 

@@ -1,3 +1,8 @@
+v0.4.0
+======
+
+Bumped all package versions to their latest.
+
 v0.0.4
 ======
 

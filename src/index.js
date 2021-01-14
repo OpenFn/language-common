@@ -1,6 +1,7 @@
-import { curry, reduce, fromPairs, mapValues } from 'lodash/fp';
-import {JSONPath} from 'jsonpath-plus';
+import { curry, reduce, fromPairs, mapValues, extendAll } from 'lodash/fp';
+import { JSONPath } from 'jsonpath-plus';
 export * as beta from './beta';
+export * as http from './http';
 
 /**
  * Execute a sequence of operations.
@@ -53,7 +54,7 @@ export function alterState(func) {
  */
 export function sourceValue(path) {
   return state => {
-    return JSONPath({ path, json: state})[0];
+    return JSONPath({ path, json: state })[0];
   };
 }
 
@@ -70,8 +71,7 @@ export function sourceValue(path) {
  */
 export function source(path) {
   return state => {
-
-    return JSONPath({ path, json: state});
+    return JSONPath({ path, json: state });
   };
 }
 
@@ -156,16 +156,16 @@ export function lastReferenceValue(path) {
  * @param {State} state - Runtime state.
  * @returns {<State>}
  */
-export const map = curry(function(path, operation, state) {
+export const map = curry(function (path, operation, state) {
   switch (typeof path) {
     case 'string':
-      source(path)(state).map(function(data) {
+      source(path)(state).map(function (data) {
         return operation({ data, references: state.references });
       });
       return state;
 
     case 'object':
-      path.map(function(data) {
+      path.map(function (data) {
         return operation({ data, references: state.references });
       });
       return state;
@@ -281,17 +281,28 @@ export function join(targetPath, sourcePath, targetKey) {
 }
 
 /**
- * Resolves function values.
+ * Recursively resolves objects that have resolvable values (functions).
  * @public
  * @function
  * @param {object} obj - data
  * @returns {<Operation>}
  */
-export function expandReferences(obj) {
+export function expandReferences(value) {
   return state => {
-    return mapValues(function(value) {
-      return typeof value == 'function' ? value(state) : value;
-    })(obj);
+    if (Array.isArray(value)) {
+      return value.map(v => expandReferences(v)(state));
+    }
+
+    if (typeof value == 'object') {
+      return Object.keys(value).reduce((acc, key) => {
+        return { ...acc, [key]: expandReferences(value[key])(state) };
+      }, {});
+    }
+
+    if (typeof value == 'function') {
+      return expandReferences(value(state))(state);
+    }
+    return value;
   };
 }
 
@@ -423,7 +434,7 @@ export function composeNextState(state, response) {
  */
 export function humanProper(str) {
   if (typeof str == 'string') {
-    return str.replace(/[_-]/g, ' ').replace(/\w\S*/g, function(txt) {
+    return str.replace(/[_-]/g, ' ').replace(/\w\S*/g, function (txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   } else {

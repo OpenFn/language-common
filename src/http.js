@@ -1,5 +1,5 @@
-import { expandReferences } from "../";
-import axios from "axios";
+import { expandReferences } from '../';
+import axios from 'axios';
 
 /**
  * Make a GET request
@@ -14,10 +14,10 @@ import axios from "axios";
  * @returns {Operation}
  */
 export function get(requestParams) {
-  return (state) => {
+  return state => {
     const params = expandReferences(requestParams)(state);
 
-    return axios({ method: "get", ...params });
+    return axios({ method: 'get', ...params });
   };
 }
 
@@ -46,9 +46,9 @@ export function get(requestParams) {
  * @returns {Operation}
  */
 export function post(requestParams) {
-  return (state) => {
+  return state => {
     const params = expandReferences(requestParams)(state);
 
-    return axios({ method: "post", ...params });
+    return axios({ method: 'post', ...params });
   };
 }

@@ -1,6 +1,7 @@
-import { curry, reduce, fromPairs, mapValues } from 'lodash/fp';
-import {JSONPath} from 'jsonpath-plus';
-export * as beta from './beta';
+import { curry, reduce, fromPairs, mapValues, extendAll } from "lodash/fp";
+import { JSONPath } from "jsonpath-plus";
+export * as beta from "./beta";
+export * as http from "./http";
 
 /**
  * Execute a sequence of operations.
@@ -16,7 +17,7 @@ export * as beta from './beta';
  * @returns {Promise}
  */
 export function execute(...operations) {
-  return state => {
+  return (state) => {
     const start = Promise.resolve(state);
 
     return operations.reduce((acc, operation) => {
@@ -35,7 +36,7 @@ export function execute(...operations) {
  * @returns {<Operation>}
  */
 export function alterState(func) {
-  return state => {
+  return (state) => {
     return func(state);
   };
 }
@@ -52,8 +53,8 @@ export function alterState(func) {
  * @returns {<Operation>}
  */
 export function sourceValue(path) {
-  return state => {
-    return JSONPath({ path, json: state})[0];
+  return (state) => {
+    return JSONPath({ path, json: state })[0];
   };
 }
 
@@ -69,9 +70,8 @@ export function sourceValue(path) {
  * @returns {Array.<String|Object>}
  */
 export function source(path) {
-  return state => {
-
-    return JSONPath({ path, json: state});
+  return (state) => {
+    return JSONPath({ path, json: state });
   };
 }
 
@@ -88,7 +88,7 @@ export function dataPath(path) {
   // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
   // path starts with `$.data.`
   const cleanPath = path.match(/^[\$\.]*(.+)/)[1];
-  return '$.data.'.concat(cleanPath);
+  return "$.data.".concat(cleanPath);
 }
 
 /**
@@ -119,7 +119,7 @@ export function referencePath(path) {
   // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
   // path starts with `$.data.`
   const cleanPath = path.match(/^[\$\.]*(.+)/)[1];
-  return '$.references'.concat(cleanPath);
+  return "$.references".concat(cleanPath);
 }
 
 /**
@@ -132,7 +132,7 @@ export function referencePath(path) {
  * @returns {<Operation>}
  */
 export function lastReferenceValue(path) {
-  const lastReferencePath = referencePath('[0]'.concat('.', path));
+  const lastReferencePath = referencePath("[0]".concat(".", path));
 
   return sourceValue(lastReferencePath);
 }
@@ -156,16 +156,16 @@ export function lastReferenceValue(path) {
  * @param {State} state - Runtime state.
  * @returns {<State>}
  */
-export const map = curry(function(path, operation, state) {
+export const map = curry(function (path, operation, state) {
   switch (typeof path) {
-    case 'string':
-      source(path)(state).map(function(data) {
+    case "string":
+      source(path)(state).map(function (data) {
         return operation({ data, references: state.references });
       });
       return state;
 
-    case 'object':
-      path.map(function(data) {
+    case "object":
+      path.map(function (data) {
         return operation({ data, references: state.references });
       });
       return state;
@@ -188,11 +188,11 @@ export const map = curry(function(path, operation, state) {
  */
 export function asData(data, state) {
   switch (typeof data) {
-    case 'string':
+    case "string":
       return source(data)(state);
-    case 'object':
+    case "object":
       return data;
-    case 'function':
+    case "function":
       return data(state);
   }
 }
@@ -220,13 +220,13 @@ export function asData(data, state) {
  */
 export function each(dataSource, operation) {
   if (!dataSource) {
-    throw new TypeError('dataSource argument for each operation is invalid.');
+    throw new TypeError("dataSource argument for each operation is invalid.");
   }
 
-  return state => {
+  return (state) => {
     return asData(dataSource, state).reduce((state, data, index) => {
       if (state.then) {
-        return state.then(state => {
+        return state.then((state) => {
           return operation({ ...state, data, index });
         });
       } else {
@@ -248,10 +248,10 @@ export function each(dataSource, operation) {
  * @returns {Operation}
  */
 export function combine(...operations) {
-  return state => {
+  return (state) => {
     return operations.reduce((state, operation) => {
       if (state.then) {
-        return state.then(state => {
+        return state.then((state) => {
           return { ...state, ...operation(state) };
         });
       } else {
@@ -273,25 +273,36 @@ export function combine(...operations) {
  * @returns {<Operation>}
  */
 export function join(targetPath, sourcePath, targetKey) {
-  return state => {
-    return source(targetPath)(state).map(i => {
+  return (state) => {
+    return source(targetPath)(state).map((i) => {
       return { [targetKey]: sourceValue(sourcePath)(state), ...i };
     });
   };
 }
 
 /**
- * Resolves function values.
+ * Recursively resolves objects that have resolvable values (functions).
  * @public
  * @function
  * @param {object} obj - data
  * @returns {<Operation>}
  */
-export function expandReferences(obj) {
-  return state => {
-    return mapValues(function(value) {
-      return typeof value == 'function' ? value(state) : value;
-    })(obj);
+export function expandReferences(value) {
+  return (state) => {
+    if (Array.isArray(value)) {
+      return value.map((v) => expandReferences(v)(state));
+    }
+
+    if (typeof value == "object") {
+      return Object.keys(value).reduce((acc, key) => {
+        return { ...acc, [key]: expandReferences(value[key])(state) };
+      }, {});
+    }
+
+    if (typeof value == "function") {
+      return expandReferences(value(state))(state);
+    }
+    return value;
   };
 }
 
@@ -337,7 +348,7 @@ export function fields(...fields) {
  * @returns {DataSource}
  */
 export function merge(dataSource, fields) {
-  return state => {
+  return (state) => {
     const initialData = source(dataSource)(state);
     const additionalData = expandReferences(fields)(state);
 
@@ -357,7 +368,7 @@ export function merge(dataSource, fields) {
  * @returns {<DataSource>}
  */
 export function index() {
-  return state => {
+  return (state) => {
     return state.index;
   };
 }
@@ -374,7 +385,7 @@ export function index() {
  * @param {string} [separator=''] - Separator string.
  * @returns {string}
  */
-export function arrayToString(arr, separator = '') {
+export function arrayToString(arr, separator = "") {
   return Array.apply(null, arr).join(separator);
 }
 
@@ -422,8 +433,8 @@ export function composeNextState(state, response) {
  * @returns {string}
  */
 export function humanProper(str) {
-  if (typeof str == 'string') {
-    return str.replace(/[_-]/g, ' ').replace(/\w\S*/g, function(txt) {
+  if (typeof str == "string") {
+    return str.replace(/[_-]/g, " ").replace(/\w\S*/g, function (txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   } else {

@@ -1,6 +1,6 @@
 {
   "name": "language-common",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "Common Expressions for OpenFn",
   "main": "lib/index.js",
   "scripts": {
@@ -15,6 +15,7 @@
     "ast.json"
   ],
   "dependencies": {
+    "axios": "^0.21.1",
     "jsonpath-plus": "^4.0.0",
     "lodash": "^4.17.19"
   },
@@ -26,6 +27,7 @@
     "chai": "^4.2.0",
     "deep-eql": "^4.0.0",
     "mocha": "^7.1.0",
+    "nock": "^13.0.5",
     "sinon": "^9.2.3"
   }
 }

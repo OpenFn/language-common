@@ -60,8 +60,8 @@ export function post(requestParams) {
  * Deleting a record with data that comes from state
  * @example
  * delete({
- *   path: "https://example.com",
- *   query: (state) => state.data.query
+ *   url: "https://example.com",
+ *   data: (state) => state.data.query
  * })
  * @constructor
  * @requestParams {object} request parameters passed to Axios
@@ -72,5 +72,27 @@ export function del(requestParams) {
     const params = expandReferences(requestParams)(state);
 
     return axios({ method: 'delete', ...params });
+  };
+}
+
+/**
+ * Make a HEAD request
+ * Supports the exact parameters as Axios. See [here](https://github.com/axios/axios#axios-api)
+ * @public
+ * Gets the headers that would be returned if the HEAD request's URL was instead requested with the HTTP GET method
+ * @example
+ * head({
+ *   url: "https://example.com",
+ *   data: (state) => state.data.query
+ * })
+ * @constructor
+ * @requestParams {object} request parameters passed to Axios
+ * @returns {Operation}
+ */
+export function head(requestParams) {
+  return state => {
+    const params = expandReferences(requestParams)(state);
+
+    return axios({ method: 'head', ...params });
   };
 }

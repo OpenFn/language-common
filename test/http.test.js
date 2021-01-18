@@ -56,7 +56,7 @@ describe('delete', () => {
     fakeServer.delete('/api/items/6').reply(204, {});
   });
 
-  it.only('sends a delete request', async () => {
+  it('sends a delete request', async () => {
     const response = await http.delete({
       url: 'https://www.example.com/api/items/5',
     })();
@@ -70,7 +70,7 @@ describe('delete', () => {
     expect(response.data).to.eql({});
   });
 
-  it.only('expands all references', async () => {
+  it('expands all references', async () => {
     const initialState = { foo: 'stringPayload', id: 6 };
 
     const response = await http.delete({
@@ -79,5 +79,184 @@ describe('delete', () => {
 
     expect(response.status).to.eql(204);
     expect(response.data).to.eql({});
+  });
+});
+
+describe('head', () => {
+  before(() => {
+    const fakeServer = nock('https://www.example.com');
+
+    fakeServer
+      .head('/api/items')
+      .reply(
+        200,
+        {},
+        { fakeHeader: 'fakeValue', 'content-type': 'application/json' }
+      );
+  });
+
+  it('sends a head request', async () => {
+    const response = await http.head({
+      url: 'https://www.example.com/api/items',
+    })();
+
+    expect(Object.keys(response)).to.eql(
+      ['status', 'statusText', 'headers', 'config', 'request', 'data'],
+      'look like an axios response'
+    );
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({});
+    expect(response.headers).to.eql({
+      fakeheader: 'fakeValue',
+      'content-type': 'application/json',
+    });
+  });
+});
+
+describe('put', () => {
+  before(() => {
+    const fakeServer = nock('https://www.example.com');
+
+    fakeServer.put('/api/items/6').reply(200, { name: 'New name' });
+    fakeServer.put('/api/items/6').reply(200, { name: 'New name' });
+  });
+
+  it('sends a put request', async () => {
+    const response = await http.put({
+      url: 'https://www.example.com/api/items/6',
+      data: { name: 'New name' },
+    })();
+
+    expect(Object.keys(response)).to.eql(
+      ['status', 'statusText', 'headers', 'config', 'request', 'data'],
+      'look like an axios response'
+    );
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({ name: 'New name' });
+  });
+
+  it('expands all references', async () => {
+    const initialState = { id: 6 };
+
+    const response = await http.put({
+      url: state => `https://www.example.com/api/items/${state.id}`,
+      data: { name: 'New name' },
+    })(initialState);
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({ name: 'New name' });
+  });
+});
+
+describe('patch', () => {
+  before(() => {
+    const fakeServer = nock('https://www.example.com');
+
+    fakeServer.patch('/api/items/6').reply(200, { name: 'New name' });
+    fakeServer.patch('/api/items/6').reply(200, { name: 'New name' });
+  });
+
+  it.only('sends a patch request', async () => {
+    const response = await http.patch({
+      url: 'https://www.example.com/api/items/6',
+      data: { name: 'New name' },
+    })();
+
+    expect(Object.keys(response)).to.eql(
+      ['status', 'statusText', 'headers', 'config', 'request', 'data'],
+      'look like an axios response'
+    );
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({ name: 'New name' });
+  });
+
+  it('expands all references', async () => {
+    const initialState = { id: 6 };
+
+    const response = await http.patch({
+      url: state => `https://www.example.com/api/items/${state.id}`,
+      data: { name: 'New name' },
+    })(initialState);
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({ name: 'New name' });
+  });
+});
+
+describe('options', () => {
+  before(() => {
+    const fakeServer = nock('https://www.example.com');
+    fakeServer.options('/api/items').reply(
+      200,
+      {},
+      {
+        allow: 'OPTIONS, GET, HEAD, POST',
+        'content-type': 'application/json',
+      }
+    );
+    fakeServer.options('/api/items').reply(
+      200,
+      {},
+      {
+        allow: 'OPTIONS, GET, HEAD, POST',
+        'content-type': 'application/json',
+      }
+    );
+  });
+
+  it('sends a options request', async () => {
+    const response = await http.options({
+      url: 'https://www.example.com/api/items',
+      data: {},
+    })();
+
+    expect(Object.keys(response)).to.eql(
+      ['status', 'statusText', 'headers', 'config', 'request', 'data'],
+      'look like an axios response'
+    );
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({});
+    expect(response.headers).to.eql({
+      allow: 'OPTIONS, GET, HEAD, POST',
+      'content-type': 'application/json',
+    });
+  });
+});
+
+describe('get', () => {
+  before(() => {
+    const fakeServer = nock('https://www.example.com');
+    fakeServer.get('/api/items/6').reply(200, { name: 'Some Name' });
+    fakeServer.get('/api/items/6').reply(200, { name: 'Some Name' });
+  });
+
+  it.only('sends a get request', async () => {
+    const response = await http.get({
+      url: 'https://www.example.com/api/items/6',
+    })();
+
+    expect(Object.keys(response)).to.eql(
+      ['status', 'statusText', 'headers', 'config', 'request', 'data'],
+      'look like an axios response'
+    );
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({ name: 'Some Name' });
+  });
+
+  it.only('expands all references', async () => {
+    const initialState = { id: 6 };
+
+    const response = await http.get({
+      url: state => `https://www.example.com/api/items/${state.id}`,
+      data: { name: 'Some Name' },
+    })(initialState);
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql({ name: 'Some Name' });
   });
 });

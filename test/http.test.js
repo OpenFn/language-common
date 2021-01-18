@@ -158,7 +158,7 @@ describe('patch', () => {
     fakeServer.patch('/api/items/6').reply(200, { name: 'New name' });
   });
 
-  it.only('sends a patch request', async () => {
+  it('sends a patch request', async () => {
     const response = await http.patch({
       url: 'https://www.example.com/api/items/6',
       data: { name: 'New name' },
@@ -234,7 +234,7 @@ describe('get', () => {
     fakeServer.get('/api/items/6').reply(200, { name: 'Some Name' });
   });
 
-  it.only('sends a get request', async () => {
+  it('sends a get request', async () => {
     const response = await http.get({
       url: 'https://www.example.com/api/items/6',
     })();
@@ -248,7 +248,7 @@ describe('get', () => {
     expect(response.data).to.eql({ name: 'Some Name' });
   });
 
-  it.only('expands all references', async () => {
+  it('expands all references', async () => {
     const initialState = { id: 6 };
 
     const response = await http.get({

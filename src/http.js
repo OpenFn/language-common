@@ -52,3 +52,25 @@ export function post(requestParams) {
     return axios({ method: 'post', ...params });
   };
 }
+
+/**
+ * Make a DELETE request
+ * Supports the exact parameters as Axios. See [here](https://github.com/axios/axios#axios-api)
+ * @public
+ * Deleting a record with data that comes from state
+ * @example
+ * delete({
+ *   path: "https://example.com",
+ *   query: (state) => state.data.query
+ * })
+ * @constructor
+ * @requestParams {object} request parameters passed to Axios
+ * @returns {Operation}
+ */
+export function del(requestParams) {
+  return state => {
+    const params = expandReferences(requestParams)(state);
+
+    return axios({ method: 'delete', ...params });
+  };
+}

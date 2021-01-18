@@ -67,13 +67,15 @@ export function post(requestParams) {
  * @requestParams {object} request parameters passed to Axios
  * @returns {Operation}
  */
-export function del(requestParams) {
+function del(requestParams) {
   return state => {
     const params = expandReferences(requestParams)(state);
 
     return axios({ method: 'delete', ...params });
   };
 }
+
+exports.delete = del;
 
 /**
  * Make a HEAD request
@@ -83,11 +85,12 @@ export function del(requestParams) {
  * @example
  * head({
  *   url: "https://example.com",
- *   data: (state) => state.data.query
+ *   data: state => state.data.query
  * })
  * @constructor
  * @requestParams {object} request parameters passed to Axios
- * @returns {Operation}
+ * @returns {Operation} - Function which takes state and returns a Promise
+ * @function
  */
 export function head(requestParams) {
   return state => {
@@ -104,8 +107,8 @@ export function head(requestParams) {
  * Creates a new resource or replaces a representation of the target resource with the request payload, with data from state.
  * @example
  * put({
- *   url: "https://example.com",
- *   data: (state) => state.data
+ *   url: 'https://example.com',
+ *   data: state => state.data
  * })
  * @constructor
  * @requestParams {object} request parameters passed to Axios

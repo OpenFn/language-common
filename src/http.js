@@ -96,3 +96,69 @@ export function head(requestParams) {
     return axios({ method: 'head', ...params });
   };
 }
+
+/**
+ * Make a PUT request
+ * Supports the exact parameters as Axios. See [here](https://github.com/axios/axios#axios-api)
+ * @public
+ * Creates a new resource or replaces a representation of the target resource with the request payload, with data from state.
+ * @example
+ * put({
+ *   url: "https://example.com",
+ *   data: (state) => state.data
+ * })
+ * @constructor
+ * @requestParams {object} request parameters passed to Axios
+ * @returns {Operation}
+ */
+export function put(requestParams) {
+  return state => {
+    const params = expandReferences(requestParams)(state);
+
+    return axios({ method: 'put', ...params });
+  };
+}
+
+/**
+ * Make a PATCH request
+ * Supports the exact parameters as Axios. See [here](https://github.com/axios/axios#axios-api)
+ * @public
+ * Applies partial modifications to a resource, with data from state.
+ * @example
+ * put({
+ *   url: "https://example.com",
+ *   data: (state) => state.data
+ * })
+ * @constructor
+ * @requestParams {object} request parameters passed to Axios
+ * @returns {Operation}
+ */
+export function patch(requestParams) {
+  return state => {
+    const params = expandReferences(requestParams)(state);
+
+    return axios({ method: 'patch', ...params });
+  };
+}
+
+/**
+ * Make a OPTIONS request
+ * Supports the exact parameters as Axios. See [here](https://github.com/axios/axios#axios-api)
+ * @public
+ * Requests permitted communication options for a given URL or server, with data from state.
+ * @example
+ * put({
+ *   url: "https://example.com",
+ *   data: (state) => state.data
+ * })
+ * @constructor
+ * @requestParams {object} request parameters passed to Axios
+ * @returns {Operation}
+ */
+export function options(requestParams) {
+  return state => {
+    const params = expandReferences(requestParams)(state);
+
+    return axios({ method: 'options', ...params });
+  };
+}

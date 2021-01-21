@@ -1,4 +1,11 @@
-import { curry, reduce, fromPairs, mapValues, extendAll } from 'lodash/fp';
+import {
+  curry,
+  reduce,
+  fromPairs,
+  mapValues,
+  extendAll,
+  isEmpty,
+} from 'lodash/fp';
 import { JSONPath } from 'jsonpath-plus';
 export * as beta from './beta';
 export * as http from './http';
@@ -289,6 +296,8 @@ export function join(targetPath, sourcePath, targetKey) {
  */
 export function expandReferences(value) {
   return state => {
+    if (isEmpty(value)) return value;
+
     if (Array.isArray(value)) {
       return value.map(v => expandReferences(v)(state));
     }

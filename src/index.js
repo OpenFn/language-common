@@ -293,7 +293,7 @@ export function expandReferences(value) {
       return value.map(v => expandReferences(v)(state));
     }
 
-    if (typeof value == 'object') {
+    if (typeof value == 'object' && !!value) {
       return Object.keys(value).reduce((acc, key) => {
         return { ...acc, [key]: expandReferences(value[key])(state) };
       }, {});

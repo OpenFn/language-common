@@ -9,7 +9,7 @@
     "test:watch": "mocha -w --require @babel/register"
   },
   "author": "Open Function Group",
-  "license": "LGPLv3",
+  "license": "LGPL-3.0-or-later",
   "files": [
     "lib/",
     "ast.json"
@@ -29,5 +29,18 @@
     "mocha": "^7.1.0",
     "nock": "^13.0.5",
     "sinon": "^9.2.3"
-  }
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenFn/language-common.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OpenFn/language-common/issues"
+  },
+  "homepage": "https://github.com/OpenFn/language-common#readme"
 }

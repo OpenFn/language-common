@@ -1,5 +1,6 @@
 import { expandReferences } from '../';
 import axios from 'axios';
+exports.axios = axios;
 
 /**
  * Make a GET request

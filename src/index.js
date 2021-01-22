@@ -1,4 +1,4 @@
-import { curry, reduce, fromPairs, mapValues, extendAll } from 'lodash/fp';
+import { curry, fromPairs } from 'lodash/fp';
 import { JSONPath } from 'jsonpath-plus';
 export * as beta from './beta';
 export * as http from './http';

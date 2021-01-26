@@ -1,5 +1,6 @@
 import nock from 'nock';
 import { expect } from 'chai';
+import https from 'https';
 
 import { http } from '../src';
 
@@ -232,6 +233,7 @@ describe('get', () => {
     const fakeServer = nock('https://www.example.com');
     fakeServer.get('/api/items/6').reply(200, { name: 'Some Name' });
     fakeServer.get('/api/items/6').reply(200, { name: 'Some Name' });
+    fakeServer.get('/api/ssl').reply(200, 'Nice cert!');
   });
 
   it('sends a get request', async () => {
@@ -258,5 +260,19 @@ describe('get', () => {
 
     expect(response.status).to.eql(200);
     expect(response.data).to.eql({ name: 'Some Name' });
+  });
+
+  it("doesn't try to expand non-operation functions", async () => {
+    let initialState = { configuration: { privateKey: '123' } };
+
+    const response = await http.get({
+      url: 'https://www.example.com/api/ssl',
+      data: { name: 'Some Name' },
+      https: new https.Agent({ ca: initialState.configuration.privateKey }),
+    })(initialState);
+
+    expect(response.status).to.eql(200);
+    expect(response.data).to.eql('Nice cert!');
+    expect(response.config.https.options).to.eql({ ca: '123', path: null });
   });
 });

@@ -2,6 +2,27 @@ import { expandReferences } from '../';
 import axios from 'axios';
 exports.axios = axios;
 
+function expandRequestReferences(requestParams) {
+  return state => {
+    const { https, data } = requestParams;
+    let nonExpandables = {};
+
+    if (data?._streams && data?._boundary) {
+      // NOTE: Detected FormData module as `data`, no further expansion possible.
+      nonExpandables['data'] = data;
+      delete requestParams['data'];
+    }
+
+    if (https?._events && https?._sessionCache) {
+      // NOTE: Detected https module, no further expansion possible.
+      nonExpandables['https'] = https;
+      delete requestParams['https'];
+    }
+
+    return { ...expandReferences(requestParams)(state), ...nonExpandables };
+  };
+}
+
 /**
  * Make a GET request
  * @public
@@ -16,7 +37,7 @@ exports.axios = axios;
  */
 export function get(requestParams) {
   return state => {
-    const params = expandReferences(requestParams)(state);
+    const params = expandRequestReferences(requestParams)(state);
 
     return axios({ method: 'get', ...params });
   };
@@ -45,7 +66,7 @@ export function get(requestParams) {
  */
 export function post(requestParams) {
   return state => {
-    const params = expandReferences(requestParams)(state);
+    const params = expandRequestReferences(requestParams)(state);
 
     return axios({ method: 'post', ...params });
   };
@@ -64,7 +85,7 @@ export function post(requestParams) {
  */
 function del(requestParams) {
   return state => {
-    const params = expandReferences(requestParams)(state);
+    const params = expandRequestReferences(requestParams)(state);
 
     return axios({ method: 'delete', ...params });
   };
@@ -85,7 +106,7 @@ exports.delete = del;
  */
 export function head(requestParams) {
   return state => {
-    const params = expandReferences(requestParams)(state);
+    const params = expandRequestReferences(requestParams)(state);
 
     return axios({ method: 'head', ...params });
   };
@@ -105,7 +126,7 @@ export function head(requestParams) {
  */
 export function put(requestParams) {
   return state => {
-    const params = expandReferences(requestParams)(state);
+    const params = expandRequestReferences(requestParams)(state);
 
     return axios({ method: 'put', ...params });
   };
@@ -125,7 +146,7 @@ export function put(requestParams) {
  */
 export function patch(requestParams) {
   return state => {
-    const params = expandReferences(requestParams)(state);
+    const params = expandRequestReferences(requestParams)(state);
 
     return axios({ method: 'patch', ...params });
   };
@@ -144,7 +165,7 @@ export function patch(requestParams) {
  */
 export function options(requestParams) {
   return state => {
-    const params = expandReferences(requestParams)(state);
+    const params = expandRequestReferences(requestParams)(state);
 
     return axios({ method: 'options', ...params });
   };

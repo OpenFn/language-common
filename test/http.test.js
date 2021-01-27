@@ -273,8 +273,6 @@ describe('get', () => {
 
     expect(response.status).to.eql(200);
     expect(response.data).to.eql('Nice cert!');
-
-    console.log(response.config.https);
     expect(response.config.https.options).to.eql({ ca: '123', path: null });
   });
 });

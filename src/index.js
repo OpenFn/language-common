@@ -284,7 +284,7 @@ export function join(targetPath, sourcePath, targetKey) {
  * Recursively resolves objects that have resolvable values (functions).
  * @public
  * @function
- * @param {object} obj - data
+ * @param {object} value - data
  * @returns {<Operation>}
  */
 export function expandReferences(value) {

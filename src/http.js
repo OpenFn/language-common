@@ -2,28 +2,46 @@ import { expandReferences } from '../';
 import axios from 'axios';
 exports.axios = axios;
 
-export function expandRequestReferences(requestParams) {
+/**
+ * Recursively resolves objects that have resolvable values (functions), but
+ * omits HTTP request specific modules: `FormData` and `https`.
+ * @public
+ * @function
+ * @param {object} value - data
+ * @returns {<Operation>}
+ */
+export function expandRequestReferences(value) {
   return state => {
-    const { https, data } = requestParams || {};
-    let nonExpandables = {};
-
-    if (data?._streams && data?._boundary) {
-      // NOTE: Detected FormData module as `data`, no further expansion possible.
-      nonExpandables['data'] = data;
-      delete requestParams['data'];
+    if (Array.isArray(value)) {
+      return value.map(v => expandRequestReferences(v)(state));
     }
 
-    if (https?._events && https?._sessionCache) {
-      // NOTE: Detected https module, only expanding user options.
-      const { options, ...rest } = https;
-      nonExpandables['https'] = {
-        options: expandReferences(options)(state),
-        ...rest,
+    if (typeof value == 'object' && !!value && value.data?._streams) {
+      // NOTE: no expansion is possible on a `FormData` module.
+      return value;
+    }
+
+    if (typeof value == 'object' && !!value && value.https?._events) {
+      // NOTE: only expand options for the https module.
+      const { https, ...rest } = value;
+      const { options, ...nonExpandable } = https;
+      return {
+        ...expandReferences(rest)(state),
+        https: { options: expandReferences(options)(state), ...nonExpandable },
       };
-      delete requestParams['https'];
     }
 
-    return { ...expandReferences(requestParams)(state), ...nonExpandables };
+    if (typeof value == 'object' && !!value) {
+      return Object.keys(value).reduce((acc, key) => {
+        return { ...acc, [key]: expandRequestReferences(value[key])(state) };
+      }, {});
+    }
+
+    if (typeof value == 'function') {
+      return expandRequestReferences(value(state))(state);
+    }
+
+    return value;
   };
 }
 

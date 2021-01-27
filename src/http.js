@@ -2,9 +2,9 @@ import { expandReferences } from '../';
 import axios from 'axios';
 exports.axios = axios;
 
-function expandRequestReferences(requestParams) {
+export function expandRequestReferences(requestParams) {
   return state => {
-    const { https, data } = requestParams;
+    const { https, data } = requestParams || {};
     let nonExpandables = {};
 
     if (data?._streams && data?._boundary) {

@@ -268,11 +268,11 @@ describe('get', () => {
     const response = await http.get({
       url: 'https://www.example.com/api/ssl',
       data: { name: 'Some Name' },
-      https: new https.Agent({ ca: initialState.configuration.privateKey }),
+      httpsAgent: new https.Agent({ ca: initialState.configuration.privateKey }),
     })(initialState);
 
     expect(response.status).to.eql(200);
     expect(response.data).to.eql('Nice cert!');
-    expect(response.config.https.options).to.eql({ ca: '123', path: null });
+    expect(response.config.httpsAgent.options).to.eql({ ca: '123', path: null });
   });
 });

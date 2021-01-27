@@ -1,5 +1,6 @@
 import { expandReferences } from '../';
 import axios from 'axios';
+import https from 'https';
 exports.axios = axios;
 
 /**
@@ -21,13 +22,17 @@ export function expandRequestReferences(value) {
       return value;
     }
 
-    if (typeof value == 'object' && !!value && value.https?._events) {
-      // NOTE: only expand options for the https module.
-      const { https, ...rest } = value;
-      const { options, ...nonExpandable } = https;
+    if (typeof value == 'object' && !!value && value.httpsAgent?._events) {
+      // NOTE: only expand options for the httpsAgent module.
+      const { httpsAgent, ...rest } = value;
+      const { options, ...nonExpandable } = httpsAgent;
+
       return {
         ...expandReferences(rest)(state),
-        https: { options: expandReferences(options)(state), ...nonExpandable },
+        httpsAgent: {
+          options: expandReferences(options)(state),
+          ...nonExpandable,
+        },
       };
     }
 

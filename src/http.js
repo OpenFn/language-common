@@ -14,8 +14,12 @@ export function expandRequestReferences(requestParams) {
     }
 
     if (https?._events && https?._sessionCache) {
-      // NOTE: Detected https module, no further expansion possible.
-      nonExpandables['https'] = https;
+      // NOTE: Detected https module, only expanding user options.
+      const { options, ...rest } = https;
+      nonExpandables['https'] = {
+        options: expandReferences(options)(state),
+        ...rest,
+      };
       delete requestParams['https'];
     }
 

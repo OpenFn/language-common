@@ -17,24 +17,10 @@ export function expandRequestReferences(value) {
       return value.map(v => expandRequestReferences(v)(state));
     }
 
-    if (typeof value == 'object' && !!value && value.data?._streams) {
-      // NOTE: no expansion is possible on a `FormData` module.
+    // === NOTE: no expansion is possible on a `FormData` module. ==============
+    if (typeof value == 'object' && !!value && value.data?._streams)
       return value;
-    }
-
-    if (typeof value == 'object' && !!value && value.httpsAgent?._events) {
-      // NOTE: only expand options for the httpsAgent module.
-      const { httpsAgent, ...rest } = value;
-      const { options, ...nonExpandable } = httpsAgent;
-
-      return {
-        ...expandReferences(rest)(state),
-        httpsAgent: {
-          options: expandReferences(options)(state),
-          ...nonExpandable,
-        },
-      };
-    }
+    // =========================================================================
 
     if (typeof value == 'object' && !!value) {
       return Object.keys(value).reduce((acc, key) => {
@@ -47,6 +33,20 @@ export function expandRequestReferences(value) {
     }
 
     return value;
+  };
+}
+
+/**
+ * Creates an https agent for axios from the agentOptions key passed in params.
+ * @function
+ * @param {object} params - data
+ * @returns {<Operation>}
+ */
+function withAgent(params) {
+  const { agentOptions } = params;
+  return {
+    ...params,
+    httpsAgent: agentOptions && new https.Agent(agentOptions),
   };
 }
 
@@ -66,7 +66,7 @@ export function get(requestParams) {
   return state => {
     const params = expandRequestReferences(requestParams)(state);
 
-    return axios({ method: 'get', ...params });
+    return axios({ method: 'get', ...withAgent(params) });
   };
 }
 
@@ -95,7 +95,7 @@ export function post(requestParams) {
   return state => {
     const params = expandRequestReferences(requestParams)(state);
 
-    return axios({ method: 'post', ...params });
+    return axios({ method: 'post', ...withAgent(params) });
   };
 }
 
@@ -114,7 +114,7 @@ function del(requestParams) {
   return state => {
     const params = expandRequestReferences(requestParams)(state);
 
-    return axios({ method: 'delete', ...params });
+    return axios({ method: 'delete', ...withAgent(params) });
   };
 }
 
@@ -135,7 +135,7 @@ export function head(requestParams) {
   return state => {
     const params = expandRequestReferences(requestParams)(state);
 
-    return axios({ method: 'head', ...params });
+    return axios({ method: 'head', ...withAgent(params) });
   };
 }
 
@@ -155,7 +155,7 @@ export function put(requestParams) {
   return state => {
     const params = expandRequestReferences(requestParams)(state);
 
-    return axios({ method: 'put', ...params });
+    return axios({ method: 'put', ...withAgent(params) });
   };
 }
 
@@ -175,7 +175,7 @@ export function patch(requestParams) {
   return state => {
     const params = expandRequestReferences(requestParams)(state);
 
-    return axios({ method: 'patch', ...params });
+    return axios({ method: 'patch', ...withAgent(params) });
   };
 }
 
@@ -194,6 +194,6 @@ export function options(requestParams) {
   return state => {
     const params = expandRequestReferences(requestParams)(state);
 
-    return axios({ method: 'options', ...params });
+    return axios({ method: 'options', ...withAgent(params) });
   };
 }

@@ -1,6 +1,6 @@
 {
   "name": "@openfn/language-common",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Common Expressions for OpenFn",
   "main": "lib/index.js",
   "scripts": {

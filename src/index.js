@@ -285,10 +285,13 @@ export function join(targetPath, sourcePath, targetKey) {
  * @public
  * @function
  * @param {object} value - data
+ * @param {Function} [skipFilter] - a function which returns true if a value should be skipped
  * @returns {<Operation>}
  */
-export function expandReferences(value) {
+export function expandReferences(value, skipFilter) {
   return state => {
+    if (skipFilter && skipFilter(value)) return value;
+
     if (Array.isArray(value)) {
       return value.map(v => expandReferences(v)(state));
     }
@@ -440,4 +443,19 @@ export function humanProper(str) {
   } else {
     return str;
   }
+}
+
+export function splitKeys(obj, keys) {
+  return Object.keys(obj).reduce(
+    ([keep, split], key) => {
+      const value = obj[key];
+
+      if (keys.includes(key)) {
+        return [keep, { ...split, [key]: value }];
+      }
+
+      return [{ ...keep, [key]: value }, split];
+    },
+    [{}, {}]
+  );
 }

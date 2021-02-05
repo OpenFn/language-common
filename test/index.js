@@ -2,23 +2,24 @@ import { expect } from 'chai';
 import testData from './testData';
 
 import {
-  execute,
-  each,
-  join,
-  source,
-  sourceValue,
-  map,
+  arrayToString,
   combine,
-  field,
-  fields,
-  expandReferences,
-  merge,
   dataPath,
   dataValue,
-  referencePath,
-  lastReferenceValue,
+  each,
+  execute,
+  expandReferences,
+  field,
+  fields,
   index,
-  arrayToString,
+  join,
+  lastReferenceValue,
+  map,
+  merge,
+  referencePath,
+  source,
+  sourceValue,
+  splitKeys,
   toArray,
 } from '../src';
 
@@ -272,5 +273,19 @@ describe('toArray', function () {
 
   it('wraps strings in an array', function () {
     expect(toArray('a')).to.eql(['a']);
+  });
+});
+
+describe('splitKeys', function () {
+  it('returns an array of 2 objects, split on keys', function () {
+    const initialObject = { a: 1, b: 2, c: 3 };
+    const desired = [{ a: 1, c: 3 }, { b: 2 }];
+    expect(splitKeys(initialObject, ['b'])).to.eql(desired);
+  });
+
+  it('handles empty objects and non-existent keys', function () {
+    const initialObject = {};
+    const desired = [{}, {}];
+    expect(splitKeys(initialObject, ['b'])).to.eql(desired);
   });
 });

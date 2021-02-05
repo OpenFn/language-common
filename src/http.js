@@ -1,38 +1,39 @@
-import { expandReferences } from '../';
+import { expandReferences, splitKeys } from '../';
 import axios from 'axios';
 import https from 'https';
 exports.axios = axios;
 
 /**
  * Recursively resolves objects that have resolvable values (functions), but
- * omits HTTP request specific modules: `FormData` and `https`.
+ * omits HTTP request specific modules like `FormData`.
  * @public
  * @function
  * @param {object} value - data
  * @returns {<Operation>}
  */
-export function expandRequestReferences(value) {
+export function expandRequestReferences(params) {
+  const [toKeep, toExpand] = splitKeys(params || {}, [
+    'agentOptions',
+    'body',
+    'data',
+    'form',
+    'formData',
+    'headers',
+    'options',
+    'params',
+    'url',
+  ]);
+
+  const skipFormData = value => {
+    // NOTE: no expansion is possible on a `FormData` module w/ streams.
+    if (typeof value == 'object' && value?.data?._streams) return true;
+  };
+
   return state => {
-    if (Array.isArray(value)) {
-      return value.map(v => expandRequestReferences(v)(state));
-    }
+    const expandedParams = expandReferences(toExpand, skipFormData)(state);
+    const safelyExpandedParams = { ...toKeep, ...expandedParams };
 
-    // === NOTE: no expansion is possible on a `FormData` module. ==============
-    if (typeof value == 'object' && !!value && value.data?._streams)
-      return value;
-    // =========================================================================
-
-    if (typeof value == 'object' && !!value) {
-      return Object.keys(value).reduce((acc, key) => {
-        return { ...acc, [key]: expandRequestReferences(value[key])(state) };
-      }, {});
-    }
-
-    if (typeof value == 'function') {
-      return expandRequestReferences(value(state))(state);
-    }
-
-    return value;
+    return safelyExpandedParams;
   };
 }
 

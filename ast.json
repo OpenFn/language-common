@@ -288,72 +288,6 @@
       "valid": true
     },
     {
-      "name": "asData",
-      "params": [
-        "data",
-        "state"
-      ],
-      "docs": {
-        "description": "Simple switcher allowing other expressions to use either a JSONPath or\nobject literals as a data source.\n- JSONPath referencing a point in `state`\n- Object Literal of the data itself.\n- Function to be called with state.",
-        "tags": [
-          {
-            "title": "public",
-            "description": null,
-            "type": null
-          },
-          {
-            "title": "example",
-            "description": "asData('$.key'| key | callback)"
-          },
-          {
-            "title": "function",
-            "description": null,
-            "name": null
-          },
-          {
-            "title": "param",
-            "description": null,
-            "type": {
-              "type": "UnionType",
-              "elements": [
-                {
-                  "type": "NameExpression",
-                  "name": "String"
-                },
-                {
-                  "type": "NameExpression",
-                  "name": "object"
-                },
-                {
-                  "type": "NameExpression",
-                  "name": "function"
-                }
-              ]
-            },
-            "name": "data"
-          },
-          {
-            "title": "param",
-            "description": "The current state.",
-            "type": {
-              "type": "NameExpression",
-              "name": "object"
-            },
-            "name": "state"
-          },
-          {
-            "title": "returns",
-            "description": null,
-            "type": {
-              "type": "NameExpression",
-              "name": "array"
-            }
-          }
-        ]
-      },
-      "valid": true
-    },
-    {
       "name": "each",
       "params": [
         "dataSource",
@@ -400,7 +334,9 @@
     },
     {
       "name": "combine",
-      "params": [],
+      "params": [
+        null
+      ],
       "docs": {
         "description": "Combines two operations into one",
         "tags": [
@@ -428,7 +364,7 @@
           }
         ]
       },
-      "valid": true
+      "valid": false
     },
     {
       "name": "join",
@@ -488,10 +424,11 @@
     {
       "name": "expandReferences",
       "params": [
-        "obj"
+        "value",
+        "skipFilter"
       ],
       "docs": {
-        "description": "Resolves function values.",
+        "description": "Recursively resolves objects that have resolvable values (functions).",
         "tags": [
           {
             "title": "public",
@@ -510,11 +447,11 @@
               "type": "NameExpression",
               "name": "object"
             },
-            "name": "obj"
+            "name": "value"
           }
         ]
       },
-      "valid": true
+      "valid": false
     },
     {
       "name": "field",
@@ -563,7 +500,9 @@
     },
     {
       "name": "fields",
-      "params": [],
+      "params": [
+        null
+      ],
       "docs": {
         "description": "Zips key value pairs into an object.",
         "tags": [
@@ -591,7 +530,7 @@
           }
         ]
       },
-      "valid": true
+      "valid": false
     },
     {
       "name": "merge",
@@ -673,7 +612,8 @@
     {
       "name": "arrayToString",
       "params": [
-        "arr"
+        "arr",
+        null
       ],
       "docs": {
         "description": "Turns an array into a string, separated by X.",
@@ -703,7 +643,7 @@
           }
         ]
       },
-      "valid": true
+      "valid": false
     },
     {
       "name": "toArray",
@@ -802,12 +742,51 @@
       "valid": true
     },
     {
-      "name": "map",
+      "name": "humanProper",
       "params": [
-        "path",
-        "operation",
-        "state"
+        "str"
       ],
+      "docs": {
+        "description": "Subsitutes underscores for spaces and proper-cases a string",
+        "tags": [
+          {
+            "title": "public",
+            "description": null,
+            "type": null
+          },
+          {
+            "title": "example",
+            "description": "field(\"destination_string__c\", humanProper(state.data.path_to_string))"
+          },
+          {
+            "title": "function",
+            "description": null,
+            "name": null
+          },
+          {
+            "title": "param",
+            "description": "String that needs converting",
+            "type": {
+              "type": "NameExpression",
+              "name": "string"
+            },
+            "name": "str"
+          },
+          {
+            "title": "returns",
+            "description": null,
+            "type": {
+              "type": "NameExpression",
+              "name": "string"
+            }
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
+      "name": "map",
+      "params": {},
       "docs": {
         "description": "Scopes an array of data based on a JSONPath.\nUseful when the source data has `n` items you would like to map to\nan operation.\nThe operation will receive a slice of the data based of each item\nof the JSONPath provided.",
         "tags": [
@@ -854,8 +833,9 @@
           }
         ]
       },
-      "valid": true
+      "valid": false
     }
   ],
-  "commons": []
+  "exports": [],
+  "common": []
 }

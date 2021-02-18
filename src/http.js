@@ -79,13 +79,13 @@ export function get(requestParams) {
  * @example <caption>Sending a payload with data that comes from state</caption>
  * post({
  *   url: "https://example.com",
- *   body: (state) => state.data
+ *   data: (state) => state.data
  * });
  * @example <caption> Capturing the response for later use in state </caption>
  * alterState((state) => {
  *   return post({
  *     url: "https://example.com",
- *     body: (state) => state.data
+ *     data: (state) => state.data
  *   })(state).then(({response}) => {
  *    state.responseData = response.data
  *   })

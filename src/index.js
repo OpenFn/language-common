@@ -30,7 +30,10 @@ export function execute(...operations) {
  * Runs a function using state.
  * @public
  * @example
- *  alterState(callback)
+ * alterState(state => {
+ *   // do some things to state
+ *   return state;
+ * })
  * @function
  * @param {Function} func is the function
  * @returns {<Operation>}
@@ -47,7 +50,7 @@ export function alterState(func) {
  * item will be returned.
  * @public
  * @example
- *  sourceValue('$.key')
+ * sourceValue('$.key')
  * @function
  * @param {String} path - JSONPath referencing a point in `state`.
  * @returns {<Operation>}
@@ -64,7 +67,7 @@ export function sourceValue(path) {
  * If you need a single value use `sourceValue` instead.
  * @public
  * @example
- *  source('$.key')
+ * source('$.key')
  * @function
  * @param {String} path - JSONPath referencing a point in `state`.
  * @returns {Array.<String|Object>}
@@ -79,7 +82,7 @@ export function source(path) {
  * Ensures a path points at the data.
  * @public
  * @example
- *  dataPath('key')
+ * dataPath('key')
  * @function
  * @param {string} path - JSONPath referencing a point in `data`.
  * @returns {string}
@@ -92,12 +95,12 @@ export function dataPath(path) {
 }
 
 /**
- * Picks out a single value from source data.
+ * Picks out a single value from the source data object—usually `state.data`.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.
  * @public
  * @example
- *  dataValue('key')
+ * dataValue('key')
  * @function
  * @param {String} path - JSONPath referencing a point in `data`.
  * @returns {<Operation>}
@@ -110,7 +113,7 @@ export function dataValue(path) {
  * Ensures a path points at references.
  * @public
  * @example
- *  referencePath('key')
+ * referencePath('key')
  * @function
  * @param {string} path - JSONPath referencing a point in `references`.
  * @returns {string}
@@ -126,7 +129,7 @@ export function referencePath(path) {
  * Picks out the last reference value from source data.
  * @public
  * @example
- *  lastReferenceValue('key')
+ * lastReferenceValue('key')
  * @function
  * @param {String} path - JSONPath referencing a point in `references`.
  * @returns {<Operation>}
@@ -180,7 +183,7 @@ export const map = curry(function (path, operation, state) {
  * - Function to be called with state.
  * @public
  * @example
- *  asData('$.key'| key | callback)
+ * asData('$.key'| key | callback)
  * @function
  * @param {String|object|function} data
  * @param {object} state - The current state.
@@ -240,7 +243,7 @@ export function each(dataSource, operation) {
  * Combines two operations into one
  * @public
  * @example
- *  combine(
+ * combine(
  *   create('foo'),
  *   delete('bar')
  * )
@@ -265,7 +268,7 @@ export function combine(...operations) {
  * Adds data from a target object
  * @public
  * @example
- *  join('$.key','$.data','newKey')
+ * join('$.key','$.data','newKey')
  * @function
  * @param {String} targetPath - Target path
  * @param {String} sourcePath - Source path
@@ -313,7 +316,7 @@ export function expandReferences(value, skipFilter) {
  * Returns a key, value pair in an array.
  * @public
  * @example
- *  field('destination_field_name__c', 'value')
+ * field('destination_field_name__c', 'value')
  * @function
  * @param {string} key - Name of the field
  * @param {Value} value - The value itself or a sourceable operation.
@@ -366,7 +369,7 @@ export function merge(dataSource, fields) {
  * To be used with `each` as a data source.
  * @public
  * @example
- *  index()
+ * index()
  * @function
  * @returns {<DataSource>}
  */
@@ -380,9 +383,9 @@ export function index() {
  * Turns an array into a string, separated by X.
  * @public
  * @example
- *  field("destination_string__c", function(state) {
- *    return arrayToString(dataValue("path_of_array")(state), ', ')
- *  })
+ * field("destination_string__c", function(state) {
+ *   return arrayToString(dataValue("path_of_array")(state), ', ')
+ * })
  * @function
  * @param {array} arr - Array of toString'able primatives.
  * @param {string} [separator=''] - Separator string.
@@ -397,9 +400,9 @@ export function arrayToString(arr, separator = '') {
  * Does not affect array objects.
  * @public
  * @example
- *  each(function(state) {
- *    return toArray( dataValue("path_of_array")(state) )
- *  }, ...)
+ * each(function(state) {
+ *   return toArray( dataValue("path_of_array")(state) )
+ * }, ...)
  * @function
  * @param {any} arg - Data required to be in an array
  * @returns {array}
@@ -412,7 +415,7 @@ export function toArray(arg) {
  * Prepares next state
  * @public
  * @example
- *  composeNextState(state, response)
+ * composeNextState(state, response)
  * @function
  * @param {State} state - state
  * @param {Object} response - Response to be added
@@ -430,7 +433,7 @@ export function composeNextState(state, response) {
  * Subsitutes underscores for spaces and proper-cases a string
  * @public
  * @example
- *  field("destination_string__c", humanProper(state.data.path_to_string))
+ * field("destination_string__c", humanProper(state.data.path_to_string))
  * @function
  * @param {string} str - String that needs converting
  * @returns {string}

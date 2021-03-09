@@ -15,7 +15,7 @@
           },
           {
             "title": "example",
-            "description": "alterState(callback)"
+            "description": "alterState(state => {\n  // do some things to state\n  return state;\n})"
           },
           {
             "title": "function",
@@ -180,7 +180,7 @@
         "path"
       ],
       "docs": {
-        "description": "Picks out a single value from source data.\nIf a JSONPath returns more than one value for the reference, the first\nitem will be returned.",
+        "description": "Picks out a single value from the source data object—usually `state.data`.\nIf a JSONPath returns more than one value for the reference, the first\nitem will be returned.",
         "tags": [
           {
             "title": "public",
@@ -448,10 +448,22 @@
               "name": "object"
             },
             "name": "value"
+          },
+          {
+            "title": "param",
+            "description": "a function which returns true if a value should be skipped",
+            "type": {
+              "type": "OptionalType",
+              "expression": {
+                "type": "NameExpression",
+                "name": "Function"
+              }
+            },
+            "name": "skipFilter"
           }
         ]
       },
-      "valid": false
+      "valid": true
     },
     {
       "name": "field",
@@ -625,7 +637,7 @@
           },
           {
             "title": "example",
-            "description": "field(\"destination_string__c\", function(state) {\n   return arrayToString(dataValue(\"path_of_array\")(state), ', ')\n })"
+            "description": "field(\"destination_string__c\", function(state) {\n  return arrayToString(dataValue(\"path_of_array\")(state), ', ')\n})"
           },
           {
             "title": "function",
@@ -640,6 +652,27 @@
               "name": "array"
             },
             "name": "arr"
+          },
+          {
+            "title": "param",
+            "description": "Separator string.",
+            "type": {
+              "type": "OptionalType",
+              "expression": {
+                "type": "NameExpression",
+                "name": "string"
+              }
+            },
+            "name": "separator",
+            "default": "''"
+          },
+          {
+            "title": "returns",
+            "description": null,
+            "type": {
+              "type": "NameExpression",
+              "name": "string"
+            }
           }
         ]
       },
@@ -660,7 +693,7 @@
           },
           {
             "title": "example",
-            "description": "each(function(state) {\n   return toArray( dataValue(\"path_of_array\")(state) )\n }, ...)"
+            "description": "each(function(state) {\n  return toArray( dataValue(\"path_of_array\")(state) )\n}, ...)"
           },
           {
             "title": "function",

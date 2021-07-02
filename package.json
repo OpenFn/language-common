@@ -2,7 +2,7 @@
   "name": "@openfn/language-common",
   "version": "1.4.0",
   "description": "Common Expressions for OpenFn",
-  "main": "lib/adaptor.js",
+  "main": "lib/Adaptor.js",
   "scripts": {
     "build": "node_modules/.bin/babel src -d lib && npm run ast",
     "test": "mocha --require @babel/register",

@@ -4,9 +4,12 @@
   "description": "Common Expressions for OpenFn",
   "main": "lib/index.js",
   "scripts": {
-    "build": "make",
+    "build": "node_modules/.bin/babel src -d lib && npm run ast",
     "test": "mocha --require @babel/register",
-    "test:watch": "mocha -w --require @babel/register"
+    "test:watch": "mocha -w --require @babel/register",
+    "ast": "simple-ast --adaptor ./src/Adaptor.js --output ast.json",
+    "postversion": "git push && git push --tags",
+    "version": "npm run build && git add -A lib ast.json"
   },
   "author": "Open Function Group",
   "license": "LGPL-3.0-or-later",
@@ -24,6 +27,7 @@
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
+    "@openfn/simple-ast": "^0.3.0",
     "chai": "^4.2.0",
     "deep-eql": "^4.0.0",
     "mocha": "^7.1.0",
@@ -42,5 +46,10 @@
   "bugs": {
     "url": "https://github.com/OpenFn/language-common/issues"
   },
-  "homepage": "https://github.com/OpenFn/language-common#readme"
+  "homepage": "https://github.com/OpenFn/language-common#readme",
+  "bundledDependencies": [
+    "axios",
+    "jsonpath-plus",
+    "lodash"
+  ]
 }

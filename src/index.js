@@ -27,18 +27,28 @@ export function execute(...operations) {
 }
 
 /**
- * Runs a function using state.
- * @public
- * @example
- * alterState(state => {
- *   // do some things to state
- *   return state;
- * })
+ * alias for "fn()"
  * @function
  * @param {Function} func is the function
  * @returns {<Operation>}
  */
 export function alterState(func) {
+  return fn(func);
+}
+
+/**
+ * Creates a custom step (or operation) for more flexible job writing.
+ * @public
+ * @example
+ * fn(state => {
+ *   // do some things to state
+ *   return state;
+ * });
+ * @function
+ * @param {Function} func is the function
+ * @returns {<Operation>}
+ */
+ export function fn(func) {
   return state => {
     return func(state);
   };

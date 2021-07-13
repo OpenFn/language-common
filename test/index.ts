@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import testData from './testData';
+import testData from './testData.json';
 
 import {
   arrayToString,
@@ -14,7 +14,7 @@ import {
   index,
   join,
   lastReferenceValue,
-  map,
+  // map,
   merge,
   referencePath,
   source,
@@ -24,7 +24,7 @@ import {
 } from '../src';
 
 describe('execute', () => {
-  it('executes each operation in sequence', done => {
+  it('executes each operation in sequence', async () => {
     let state = {};
     let operations = [
       state => {
@@ -38,17 +38,16 @@ describe('execute', () => {
       },
     ];
 
-    execute(...operations)(state)
-      .then(finalState => {
-        expect(finalState).to.eql({ counter: 3 });
-      })
-      .then(done)
-      .catch(done);
+    // @ts-ignore
+    const result = await execute(...operations)(state);
+
+    expect(result).to.eql({ counter: 3 });
   });
 
   it('returns a function that returns state', async function () {
     let state = {};
 
+    // @ts-ignore
     let finalState = await execute()(state);
 
     expect(finalState).to.eql(state);
@@ -57,6 +56,7 @@ describe('execute', () => {
 
 describe('sourceValue', () => {
   it('references a given path', () => {
+    // @ts-ignore
     let value = sourceValue('$.store.bicycle.color')(testData);
     expect(value).to.eql('red');
   });
@@ -64,6 +64,7 @@ describe('sourceValue', () => {
 
 describe('source', () => {
   it('references a given path', () => {
+    // @ts-ignore
     let value = source('$.store.bicycle.color')(testData);
     expect(value).to.eql(['red']);
   });
@@ -74,6 +75,8 @@ describe('map', () => {
     let items = [];
 
     let state = { data: testData, references: [] };
+
+    // @ts-ignore
     let results = map(
       '$.data.store.book[*]',
       function (state) {
@@ -117,6 +120,7 @@ describe('join', () => {
       '$.store.book[*]',
       '$.store.bicycle.color',
       'color'
+      // @ts-ignore
     )(testData);
 
     expect(result[0]).to.eql({
@@ -138,6 +142,7 @@ describe('expandReferences', () => {
       c: 4,
       // function that returns a function
       d: s => s => s + 4,
+      // @ts-ignore
     })(1);
 
     expect(result).to.eql({
@@ -149,18 +154,23 @@ describe('expandReferences', () => {
   });
 
   it("doesn't affect empty objects", () => {
+		// @ts-ignore
     let result = expandReferences({})(1);
 
     expect(result).to.eql({});
+		// @ts-ignore
     result = expandReferences([])(1);
     expect(result).to.eql([]);
+		// @ts-ignore
     result = expandReferences(null)(1);
     expect(result).to.eql(null);
+    // @ts-ignore
     result = expandReferences(undefined)(1);
     expect(result).to.eql(undefined);
   });
 
   it('resolves function values on arrays', () => {
+    // @ts-ignore
     let result = expandReferences([2, { c: s => s + 2 }, 3])(1);
 
     expect(result).to.eql([2, { c: 3 }, 3]);
@@ -175,6 +185,7 @@ describe('field', () => {
 
 describe('fields', () => {
   it('returns an object', () => {
+    // @ts-ignore
     expect(fields(['a', 1], ['b', 2])).to.eql({ a: 1, b: 2 });
   });
 });
@@ -187,6 +198,7 @@ describe('merge', () => {
         field('color', sourceValue('$.store.bicycle.color')),
         field('price', sourceValue('$.store.bicycle.price'))
       )
+      // @ts-ignore
     )(testData);
 
     expect(result[0].color).to.eql('red');
@@ -214,6 +226,7 @@ describe('Path Helpers', () => {
   });
   describe('dataValue', () => {
     it('references a given path inside $.data', () => {
+      // @ts-ignore
       let value = dataValue('store.bicycle.color')({ data: testData });
       expect(value).to.eql('red');
     });
@@ -226,6 +239,7 @@ describe('Path Helpers', () => {
   describe('lastReferenceValue', () => {
     it('returns the last reference in `state.references`', () => {
       expect(
+        // @ts-ignore
         lastReferenceValue('foo')({
           references: [{ foo: 'bar' }, { baz: 'foo' }],
         })
@@ -243,11 +257,13 @@ describe('index', function () {
     let results = each(
       '$.data.store.book[*]',
       operation
+      // @ts-ignore
     )({
       references: [],
       data: testData,
     });
 
+    // @ts-ignore
     expect(results.references).to.eql([0, 1, 2, 3]);
   });
 });
@@ -258,6 +274,7 @@ describe('arrayToString', function () {
   });
 
   it('does not require a separator', function () {
+    // @ts-ignore
     expect(arrayToString([1, 2, 3])).to.eql('123');
   });
 });

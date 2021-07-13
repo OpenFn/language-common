@@ -21,7 +21,7 @@ describe('post', () => {
   it('sends a post request', async () => {
     const response = await http.post({
       url: 'https://www.example.com/api/fake',
-    })();
+    })({});
 
     expect(Object.keys(response)).to.eql(
       ['status', 'statusText', 'headers', 'config', 'request', 'data'],
@@ -59,7 +59,7 @@ describe('delete', () => {
   it('sends a delete request', async () => {
     const response = await http.delete({
       url: 'https://www.example.com/api/items/5',
-    })();
+    })({});
 
     expect(Object.keys(response)).to.eql(
       ['status', 'statusText', 'headers', 'config', 'request', 'data'],
@@ -98,7 +98,7 @@ describe('head', () => {
   it('sends a head request', async () => {
     const response = await http.head({
       url: 'https://www.example.com/api/items',
-    })();
+    })({});
 
     expect(Object.keys(response)).to.eql(
       ['status', 'statusText', 'headers', 'config', 'request', 'data'],
@@ -126,7 +126,7 @@ describe('put', () => {
     const response = await http.put({
       url: 'https://www.example.com/api/items/6',
       data: { name: 'New name' },
-    })();
+    })({});
 
     expect(Object.keys(response)).to.eql(
       ['status', 'statusText', 'headers', 'config', 'request', 'data'],
@@ -162,7 +162,7 @@ describe('patch', () => {
     const response = await http.patch({
       url: 'https://www.example.com/api/items/6',
       data: { name: 'New name' },
-    })();
+    })({});
 
     expect(Object.keys(response)).to.eql(
       ['status', 'statusText', 'headers', 'config', 'request', 'data'],
@@ -211,7 +211,7 @@ describe('options', () => {
     const response = await http.options({
       url: 'https://www.example.com/api/items',
       data: {},
-    })();
+    })({});
 
     expect(Object.keys(response)).to.eql(
       ['status', 'statusText', 'headers', 'config', 'request', 'data'],
@@ -238,7 +238,8 @@ describe('get', () => {
   it('sends a get request', async () => {
     const response = await http.get({
       url: 'https://www.example.com/api/items/6',
-    })();
+      // @ts-ignore
+    })({});
 
     expect(Object.keys(response)).to.eql(
       ['status', 'statusText', 'headers', 'config', 'request', 'data'],
@@ -255,6 +256,7 @@ describe('get', () => {
     const response = await http.get({
       url: state => `https://www.example.com/api/items/${state.id}`,
       data: { name: 'Some Name' },
+      // @ts-ignore
     })(initialState);
 
     expect(response.status).to.eql(200);

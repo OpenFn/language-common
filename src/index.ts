@@ -1,22 +1,39 @@
-import { curry, fromPairs } from 'lodash/fp';
 import { JSONPath } from 'jsonpath-plus';
-export * as beta from './beta';
 export * as http from './http';
+
+export interface State {
+  configuration: object;
+  data: object;
+  references?: Array<any>;
+  index?: number;
+}
+
+export interface Resolvable<T> {
+  (state: State): T;
+}
+
+export type DataSource = object | string | Selector<object | string>;
+
+export interface Operation<T = Promise<State> | State> {
+  (state: State): T;
+}
+
+export interface Selector<T> {
+  (state: State): T;
+}
+
+export type Field = [string, string | object | any[]];
 
 /**
  * Execute a sequence of operations.
  * Main outer API for executing expressions.
- * @public
  * @example
  *  execute(
  *    create('foo'),
  *    delete('bar')
  *  )
- * @function
- * @param {Operations} operations - Operations to be performed.
- * @returns {Promise}
  */
-export function execute(...operations) {
+export function execute(...operations: Array<Operation>): Operation {
   return state => {
     const start = Promise.resolve(state);
 
@@ -28,27 +45,20 @@ export function execute(...operations) {
 
 /**
  * alias for "fn()"
- * @function
- * @param {Function} func is the function
- * @returns {<Operation>}
  */
-export function alterState(func) {
+export function alterState(func: Operation): Operation {
   return fn(func);
 }
 
 /**
  * Creates a custom step (or operation) for more flexible job writing.
- * @public
  * @example
  * fn(state => {
  *   // do some things to state
  *   return state;
  * });
- * @function
- * @param {Function} func is the function
- * @returns {<Operation>}
  */
-export function fn(func) {
+export function fn(func: Operation): Operation {
   return state => {
     return func(state);
   };
@@ -58,14 +68,11 @@ export function fn(func) {
  * Picks out a single value from source data.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.
- * @public
  * @example
  * sourceValue('$.key')
- * @function
- * @param {String} path - JSONPath referencing a point in `state`.
- * @returns {<Operation>}
+ * @param path - JSONPath referencing a point in `state`.
  */
-export function sourceValue(path) {
+export function sourceValue(path: string): Selector<Array<String | Object>> {
   return state => {
     return JSONPath({ path, json: state })[0];
   };
@@ -75,76 +82,67 @@ export function sourceValue(path) {
  * Picks out a value from source data.
  * Will return whatever JSONPath returns, which will always be an array.
  * If you need a single value use `sourceValue` instead.
- * @public
  * @example
  * source('$.key')
- * @function
- * @param {String} path - JSONPath referencing a point in `state`.
- * @returns {Array.<String|Object>}
+ * @param  path - JSONPath referencing a point in `state`.
  */
-export function source(path) {
+export function source(path: string): Selector<Array<any>> {
   return state => {
     return JSONPath({ path, json: state });
   };
 }
 
 /**
- * Ensures a path points at the data.
- * @public
+ * Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
+ * path starts with `$.data.`
  * @example
  * dataPath('key')
- * @function
- * @param {string} path - JSONPath referencing a point in `data`.
- * @returns {string}
+ * @param path - JSONPath referencing a point in `data`.
  */
-export function dataPath(path) {
-  // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
-  // path starts with `$.data.`
-  const cleanPath = path.match(/^[\$\.]*(.+)/)[1];
-  return '$.data.'.concat(cleanPath);
+export function dataPath(path: string): string {
+  const matches = path.match(/^[\$\.]*(.+)/);
+  if (matches) {
+    return '$.data.'.concat(matches[1]);
+  }
+
+  return path;
 }
 
 /**
  * Picks out a single value from the source data object—usually `state.data`.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.
- * @public
  * @example
  * dataValue('key')
- * @function
- * @param {String} path - JSONPath referencing a point in `data`.
- * @returns {<Operation>}
+ * @param path - JSONPath referencing a point in `data`.
  */
-export function dataValue(path) {
+export function dataValue(path: string) {
   return sourceValue(dataPath(path));
 }
 
 /**
  * Ensures a path points at references.
- * @public
  * @example
  * referencePath('key')
- * @function
- * @param {string} path - JSONPath referencing a point in `references`.
- * @returns {string}
+ * @param path - JSONPath referencing a point in `references`.
  */
-export function referencePath(path) {
-  // Remove prepending `$.`, `$` or `.`, in order to ensure the root of the
-  // path starts with `$.data.`
-  const cleanPath = path.match(/^[\$\.]*(.+)/)[1];
-  return '$.references'.concat(cleanPath);
+export function referencePath(path: string): string {
+  const matches = path.match(/^[\$\.]*(.+)/);
+
+  if (matches) {
+    return '$.references'.concat(matches[1]);
+  }
+
+  return path;
 }
 
 /**
  * Picks out the last reference value from source data.
- * @public
  * @example
  * lastReferenceValue('key')
- * @function
- * @param {String} path - JSONPath referencing a point in `references`.
- * @returns {<Operation>}
+ * @param path - JSONPath referencing a point in `references`.
  */
-export function lastReferenceValue(path) {
+export function lastReferenceValue(path: string) {
   const lastReferencePath = referencePath('[0]'.concat('.', path));
 
   return sourceValue(lastReferencePath);
@@ -156,7 +154,6 @@ export function lastReferenceValue(path) {
  * an operation.
  * The operation will receive a slice of the data based of each item
  * of the JSONPath provided.
- * @public
  * @example
  * map("$.[*]",
  *   create("SObject",
@@ -169,21 +166,24 @@ export function lastReferenceValue(path) {
  * @param {State} state - Runtime state.
  * @returns {<State>}
  */
-export const map = curry(function (path, operation, state) {
-  switch (typeof path) {
-    case 'string':
-      source(path)(state).map(function (data) {
-        return operation({ data, references: state.references });
-      });
-      return state;
+// DEPRECATED
+// export function map(path: string, operation: Operation): Operation {
+//   return state => {
+//     switch (typeof path) {
+//       case 'string':
+//         source(path)(state).map(function (data) {
+//           return operation({...state, data});
+//         });
+//         return state;
 
-    case 'object':
-      path.map(function (data) {
-        return operation({ data, references: state.references });
-      });
-      return state;
-  }
-});
+//       case 'object':
+//         path.map(function (data) {
+//           return operation({...state, data});
+//         });
+//         return state;
+//     }
+//   };
+// }
 
 /**
  * Simple switcher allowing other expressions to use either a JSONPath or
@@ -191,15 +191,12 @@ export const map = curry(function (path, operation, state) {
  * - JSONPath referencing a point in `state`
  * - Object Literal of the data itself.
  * - Function to be called with state.
- * @public
  * @example
  * asData('$.key'| key | callback)
- * @function
- * @param {String|object|function} data
- * @param {object} state - The current state.
- * @returns {array}
+ * @param data
+ * @param state - The current state.
  */
-export function asData(data, state) {
+export function asData(data: DataSource, state: State): any {
   switch (typeof data) {
     case 'string':
       return source(data)(state);
@@ -219,19 +216,16 @@ export function asData(data, state) {
  *
  * It also ensures the results of an operation make their way back into
  * the state's references.
- * @public
  * @example
  * each("$.[*]",
  *   create("SObject",
  *     field("FirstName", sourceValue("$.firstName"))
  *   )
  * )
- * @function
- * @param {DataSource} dataSource - JSONPath referencing a point in `state`.
- * @param {Operation} operation - The operation needed to be repeated.
- * @returns {<Operation>}
+ * @param dataSource - JSONPath referencing a point in `state`.
+ * @param operation - The operation needed to be repeated.
  */
-export function each(dataSource, operation) {
+export function each(dataSource: DataSource, operation: Function): Operation {
   if (!dataSource) {
     throw new TypeError('dataSource argument for each operation is invalid.');
   }
@@ -250,59 +244,114 @@ export function each(dataSource, operation) {
 }
 
 /**
+ * Scopes an array of data based on a JSONPath.
+ * Useful when the source data has `n` items you would like to map to
+ * an operation.
+ * The operation will receive a slice of the data based of each item
+ * of the JSONPath provided.
+ *
+ * It also ensures the results of an operation make their way back into
+ * the state's references.
+ * @example
+ *  each("$.[*]",
+ *    create("SObject",
+ *    field("FirstName", sourceValue("$.firstName")))
+ *  )
+ * @param dataSource - JSONPath referencing a point in `state`.
+ * @param operation - The operation needed to be repeated.
+ */
+
+export const beta = {
+  each: (dataSource: DataSource, operation: Operation): Operation => {
+    if (!dataSource) {
+      throw new TypeError('dataSource argument for each operation is invalid.');
+    }
+
+    return prevState => {
+      const items = asData(dataSource, prevState);
+      const nextState = items.reduce((state, data, index) => {
+        if (state.then) {
+          return state.then(state => {
+            return operation({ ...state, data, index });
+          });
+        } else {
+          return operation({ ...state, data, index });
+        }
+      }, prevState);
+
+      // Ensure that the data this reducer was passed is returned to it's
+      // original state. But allow any other changes to be kept.
+      if (nextState.then) {
+        return nextState.then(nextState => ({
+          ...nextState,
+          data: prevState.data,
+        }));
+      } else {
+        return { ...nextState, data: prevState.data };
+      }
+    };
+  },
+};
+
+/**
  * Combines two operations into one
- * @public
  * @example
  * combine(
  *   create('foo'),
  *   delete('bar')
  * )
  * @function
- * @param {Operations} operations - Operations to be performed.
- * @returns {Operation}
+ * @param operations - Operations to be performed.
  */
-export function combine(...operations) {
-  return state => {
-    return operations.reduce((state, operation) => {
-      if (state.then) {
-        return state.then(state => {
-          return { ...state, ...operation(state) };
-        });
-      } else {
-        return { ...state, ...operation(state) };
-      }
-    }, state);
-  };
+export function combine(...operations: Array<Operation>): Operation {
+  return execute(...operations);
+  // return state => {
+  //   return operations.reduce((state, operation) => {
+  //     if (state.then) {
+  //       return state.then(state => {
+  //         return { ...state, ...operation(state) };
+  //       });
+  //     } else {
+  //       return { ...state, ...operation(state) };
+  //     }
+  //   }, state);
+  // };
 }
 
 /**
  * Adds data from a target object
- * @public
  * @example
  * join('$.key','$.data','newKey')
  * @function
- * @param {String} targetPath - Target path
- * @param {String} sourcePath - Source path
- * @param {String} targetKey - Target Key
- * @returns {<Operation>}
+ * @param targetPath - Target path
+ * @param sourcePath - Source path
+ * @param targetKey - Target Key
  */
-export function join(targetPath, sourcePath, targetKey) {
+export function join(
+  targetPath: string,
+  sourcePath: string,
+  targetKey: string
+): Operation {
   return state => {
-    return source(targetPath)(state).map(i => {
-      return { [targetKey]: sourceValue(sourcePath)(state), ...i };
-    });
+    return {
+      ...state,
+      ...source(targetPath)(state).map(i => {
+        return { [targetKey]: sourceValue(sourcePath)(state), ...i };
+      }),
+    };
   };
 }
 
 /**
  * Recursively resolves objects that have resolvable values (functions).
- * @public
  * @function
- * @param {object} value - data
- * @param {Function} [skipFilter] - a function which returns true if a value should be skipped
- * @returns {<Operation>}
+ * @param value - data
+ * @param [skipFilter] - a function which returns true if a value should be skipped
  */
-export function expandReferences(value, skipFilter) {
+export function expandReferences(
+  value: any[] | object | Function,
+  skipFilter?: (val: any) => Boolean
+): Selector<any> {
   return state => {
     if (skipFilter && skipFilter(value)) return value;
 
@@ -325,28 +374,41 @@ export function expandReferences(value, skipFilter) {
 
 /**
  * Returns a key, value pair in an array.
- * @public
  * @example
  * field('destination_field_name__c', 'value')
- * @function
- * @param {string} key - Name of the field
- * @param {Value} value - The value itself or a sourceable operation.
- * @returns {<Field>}
+ * @param key - Name of the field
+ * @param value - The value itself or a sourceable operation.
  */
-export function field(key, value) {
+export function field(key: string, value: any): Field {
   return [key, value];
 }
 
 /**
+ * Converts a list of pairs (in arrays) into an object
+ * _Lifted from lodash_.
+ * @example
+ * fromPairs([["foo", 1], ["bar", 2]])
+ * // { "foo": 1, "bar": 2 }
+ * @param pairs - list of pairs
+ */
+function fromPairs(pairs: Array<[string, any]>): object {
+  var index = -1,
+    length = pairs == null ? 0 : pairs.length,
+    result = {};
+
+  while (++index < length) {
+    var pair = pairs[index];
+    result[pair[0]] = pair[1];
+  }
+  return result;
+}
+/**
  * Zips key value pairs into an object.
- * @public
  * @example
  *  fields(list_of_fields)
- * @function
- * @param {Fields} fields - a list of fields
- * @returns {Object}
+ * @param fields - a list of fields
  */
-export function fields(...fields) {
+export function fields(...fields: Field[]): object {
   return fromPairs(fields);
 }
 
@@ -360,12 +422,11 @@ export function fields(...fields) {
  *     field( "publisher", sourceValue("$.publisher") )
  *   )
  * )
- * @function
- * @param {DataSource} dataSource
+ * @param dataSource
  * @param {Object} fields - Group of fields to merge in.
  * @returns {DataSource}
  */
-export function merge(dataSource, fields) {
+export function merge(dataSource: string, fields: object): Operation {
   return state => {
     const initialData = source(dataSource)(state);
     const additionalData = expandReferences(fields)(state);
@@ -379,13 +440,10 @@ export function merge(dataSource, fields) {
 /**
  * Returns the index of the current array being iterated.
  * To be used with `each` as a data source.
- * @public
  * @example
  * index()
- * @function
- * @returns {<DataSource>}
  */
-export function index() {
+export function index(): Selector<number | undefined> {
   return state => {
     return state.index;
   };
@@ -393,51 +451,42 @@ export function index() {
 
 /**
  * Turns an array into a string, separated by X.
- * @public
  * @example
  * field("destination_string__c", function(state) {
  *   return arrayToString(dataValue("path_of_array")(state), ', ')
  * })
- * @function
- * @param {array} arr - Array of toString'able primatives.
- * @param {string} separator - Separator string.
- * @returns {string}
+ * @param arr - Array of toString'able primatives.
+ * @param separator - Separator string.
  */
-export function arrayToString(arr, separator) {
+export function arrayToString(arr: any[], separator: string): string[] {
   return Array.apply(null, arr).join(separator);
 }
 
 /**
  * Ensures primitive data types are wrapped in an array.
  * Does not affect array objects.
- * @public
  * @example
  * each(function(state) {
  *   return toArray( dataValue("path_of_array")(state) )
  * }, ...)
- * @function
- * @param {any} arg - Data required to be in an array
- * @returns {array}
+ * @param arg - Data required to be in an array
  */
-export function toArray(arg) {
+export function toArray<T>(arg: T): T[] {
   return new Array().concat(arg);
 }
 
 /**
  * Prepares next state
- * @public
  * @example
  * composeNextState(state, response)
- * @function
- * @param {State} state - state
- * @param {Object} response - Response to be added
- * @returns {State}
+ * @param state - state
+ * @param response - Response to be added
  */
-export function composeNextState(state, response) {
+export function composeNextState(state: State, response: any): State {
   return {
     ...state,
     data: response,
-    references: [...state.references, state.data],
+    references: [...(state.references || []), state.data],
   };
 }
 
@@ -447,10 +496,9 @@ export function composeNextState(state, response) {
  * @example
  * field("destination_string__c", humanProper(state.data.path_to_string))
  * @function
- * @param {string} str - String that needs converting
- * @returns {string}
+ * @param str - String that needs converting
  */
-export function humanProper(str) {
+export function humanProper(str: string): string {
   if (typeof str == 'string') {
     return str.replace(/[_-]/g, ' ').replace(/\w\S*/g, function (txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -460,7 +508,7 @@ export function humanProper(str) {
   }
 }
 
-export function splitKeys(obj, keys) {
+export function splitKeys(obj: object, keys: string[]) {
   return Object.keys(obj).reduce(
     ([keep, split], key) => {
       const value = obj[key];

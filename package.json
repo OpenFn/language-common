@@ -1,26 +1,36 @@
 {
   "name": "@openfn/language-common",
-  "version": "1.4.1",
+  "version": "2.0.0-pre1",
   "description": "Common Expressions for OpenFn",
-  "main": "lib/Adaptor.js",
   "scripts": {
-    "build": "node_modules/.bin/babel src -d lib && npm run ast",
-    "test": "mocha --require @babel/register",
-    "test:watch": "mocha -w --require @babel/register",
+    "build": "rollup --config ./rollup.config.js",
+    "test": "mocha --require ts-node/register test/*.ts",
+    "test:watch": "mocha -w --require ts-node/register test/*.ts",
     "ast": "simple-ast --adaptor ./src/Adaptor.js --output ast.json",
     "postversion": "git push && git push --tags",
     "version": "npm run build && git add -A lib ast.json"
   },
   "author": "Open Function Group",
-  "license": "LGPL-3.0-or-later",
-  "files": [
-    "lib/",
-    "ast.json"
-  ],
+  "cdn": "dist/index.umd.js",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "unpkg": "dist/index.umd.js",
+  "module": "dist/index.esm.js",
+  "jsdelivr": "dist/index.umd.js",
+  "umd:main": "dist/index.umd.js",
+  "exports": {
+    ".": [
+      {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs",
+        "default": "./dist/index.js"
+      },
+      "./dist/index.js"
+    ]
+  },
   "dependencies": {
     "axios": "^0.21.1",
-    "jsonpath-plus": "^4.0.0",
-    "lodash": "^4.17.19"
+    "jsonpath-plus": "^4.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -28,17 +38,24 @@
     "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
     "@openfn/simple-ast": "^0.3.2",
+    "@types/mocha": "^8.2.3",
     "chai": "^4.2.0",
     "deep-eql": "^4.0.0",
     "mocha": "^7.1.0",
     "nock": "^13.0.5",
-    "sinon": "^9.2.3"
+    "rollup": "^2.53.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "sinon": "^9.2.3",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
   },
   "directories": {
     "doc": "docs",
-    "lib": "lib",
-    "test": "test"
+    "dist": "dist",
+    "types": "types"
   },
+	"files": ["dist", "types"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OpenFn/language-common.git"
@@ -51,5 +68,6 @@
     "axios",
     "jsonpath-plus",
     "lodash"
-  ]
+  ],
+  "license": "LGPL-3.0-or-later"
 }

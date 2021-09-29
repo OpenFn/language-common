@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import testData from './testData';
 
 import {
@@ -22,6 +22,7 @@ import {
   splitKeys,
   toArray,
 } from '../src';
+import { removeEmojis } from '../src/Adaptor';
 
 describe('execute', () => {
   it('executes each operation in sequence', done => {
@@ -287,5 +288,30 @@ describe('splitKeys', function () {
     const initialObject = {};
     const desired = [{}, {}];
     expect(splitKeys(initialObject, ['b'])).to.eql(desired);
+  });
+});
+
+describe('removeEmojis', function () {
+  it('should remove the dove and the star', function () {
+    const withEmojis = 'Matero Compound_white dove🕊️⭐_29 Jul 2021';
+    const withoutEmojis = 'Matero Compound_white dove️_29 Jul 2021';
+    assert.equal(removeEmojis(withEmojis), withoutEmojis);
+  });
+
+  it('should remove the dove', function () {
+    const withEmoji = 'Matero Compound_white dove🕊️_29 Jul 2021';
+    const withoutEmoji = 'Matero Compound_white dove️_29 Jul 2021';
+    assert.equal(removeEmojis(withEmoji), withoutEmoji);
+  });
+
+  it('should remove the star', function () {
+    const withEmoji = 'Matero Compound_white dove⭐_29 Jul 2021';
+    const withoutEmoji = 'Matero Compound_white dove_29 Jul 2021';
+    assert.equal(removeEmojis(withEmoji), withoutEmoji);
+  });
+
+  it('should remove nothing', function () {
+    const withoutEmojis = 'Matero Compound_white dove_29 Jul 2021';
+    assert.equal(removeEmojis(withoutEmojis), withoutEmojis);
   });
 });

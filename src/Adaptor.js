@@ -475,8 +475,17 @@ export function splitKeys(obj, keys) {
   );
 }
 
+/**
+ * Removes emojis from a string of text
+ * @public
+ * @example
+ * removeEmojis('Dove🕊️⭐ 29')
+ * @function
+ * @param {string} text - String that needs to be cleaned
+ * @returns {string}
+ */
 export function removeEmojis(text) {
-  if (!text) return '';
-  const emojisPattern = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+  if (!text) return text;
+  const emojisPattern = /(\uFE0F|\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
   return text.replace(emojisPattern, '');
 }

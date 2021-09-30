@@ -293,31 +293,36 @@ describe('splitKeys', function () {
 
 describe('removeEmojis', function () {
   it('should remove the dove and the star', function () {
-    const withEmojis = 'Matero Compound_white dove🕊️⭐_29 Jul 2021';
-    const withoutEmojis = 'Matero Compound_white dove_29 Jul 2021';
+    const withEmojis = 'This is a dove🕊️⭐_29 Jul 2021';
+    const withoutEmojis = 'This is a dove_29 Jul 2021';
     assert.equal(removeEmojis(withEmojis), withoutEmojis);
   });
 
   it('should remove the dove', function () {
-    const withEmoji = 'Matero Compound_white dove🕊️_29 Jul 2021';
-    const withoutEmoji = 'Matero Compound_white dove_29 Jul 2021';
+    const withEmoji = 'This is a dove🕊️_29 Jul 2021';
+    const withoutEmoji = 'This is a dove_29 Jul 2021';
     assert.equal(removeEmojis(withEmoji), withoutEmoji);
   });
 
   it('should remove the star', function () {
-    const withEmoji = 'Matero Compound_white dove⭐_29 Jul 2021';
-    const withoutEmoji = 'Matero Compound_white dove_29 Jul 2021';
+    const withEmoji = 'This is a star⭐_29 Jul 2021';
+    const withoutEmoji = 'This is a star_29 Jul 2021';
     assert.equal(removeEmojis(withEmoji), withoutEmoji);
   });
 
-  it('should remove the star', function () {
-    const withEmoji = 'Matero Compound White Dove⭐ ️ 2021-07-29';
-    const withoutEmoji = 'Matero Compound White Dove  2021-07-29';
+  it('should remove the emoji and the variant code', function () {
+    const withEmoji = 'This is a star⭐ ️ 2021-07-29';
+    const withoutEmoji = 'This is a star  2021-07-29';
     assert.equal(removeEmojis(withEmoji), withoutEmoji);
   });
 
-  it('should remove nothing', function () {
-    const withoutEmojis = 'Matero Compound_white dove_29 Jul 2021';
+  it("should return input if input doesn't have emojis", function () {
+    const withoutEmojis = 'This is a dove_29 Jul 2021';
     assert.equal(removeEmojis(withoutEmojis), withoutEmojis);
+  });
+
+  it('should return input if input is falsy', function () {
+    const noText = undefined;
+    assert.equal(removeEmojis(noText), noText);
   });
 });

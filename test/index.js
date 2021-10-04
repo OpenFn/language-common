@@ -296,7 +296,7 @@ describe('splitKeys', function () {
   });
 });
 
-describe('removeEmojis', function () {
+describe('scrubEmojis', function () {
   it('should remove the dove and the star', function () {
     const withEmojis = 'This is a dove🕊️⭐_29 Jul 2021';
     const withoutEmojis = 'This is a dove���_29 Jul 2021';

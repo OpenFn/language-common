@@ -941,12 +941,13 @@
       "valid": true
     },
     {
-      "name": "removeEmojis",
+      "name": "scrubEmojis",
       "params": [
-        "text"
+        "text",
+        "replacementChar"
       ],
       "docs": {
-        "description": "Removes emojis from a string of text",
+        "description": "Removes emojis from a string of text by replacing them with a replacement characters",
         "tags": [
           {
             "title": "public",
@@ -955,7 +956,7 @@
           },
           {
             "title": "example",
-            "description": "removeEmojis('Dove🕊️⭐ 29')"
+            "description": "scrubEmojis('Dove🕊️⭐ 29')"
           },
           {
             "title": "function",
@@ -970,6 +971,15 @@
               "name": "string"
             },
             "name": "text"
+          },
+          {
+            "title": "param",
+            "description": "Character that replaces emojis",
+            "type": {
+              "type": "NameExpression",
+              "name": "string"
+            },
+            "name": "replacementChar"
           },
           {
             "title": "returns",

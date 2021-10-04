@@ -476,16 +476,19 @@ export function splitKeys(obj, keys) {
 }
 
 /**
- * Removes emojis from a string of text
+ * Removes emojis from a string of text by replacing them with a replacement characters
  * @public
  * @example
- * removeEmojis('Dove🕊️⭐ 29')
+ * scrubEmojis('Dove🕊️⭐ 29') // Replaces emojis with default replacement character. This is what we indicate.
+ * scrubEmojis('Dove🕊️⭐ 29', '') // Replaces emojis with empty string. This is dangerous and can introduce security vulnerabilities
+ * scrubEmojis('Dove🕊️⭐ 29', 'a') // Replaces emojis with the character 'a'
  * @function
  * @param {string} text - String that needs to be cleaned
+ * @param {string} replacementChar - Character that replaces emojis
  * @returns {string}
  */
-export function removeEmojis(text) {
+export function scrubEmojis(text, replacementChar = '\uFFFD') {
   if (!text) return text;
   const emojisPattern = /(\uFE0F|\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
-  return text.replace(emojisPattern, '');
+  return text.replace(emojisPattern, replacementChar);
 }

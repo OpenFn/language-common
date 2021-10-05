@@ -903,7 +903,7 @@
         "str"
       ],
       "docs": {
-        "description": "Subsitutes underscores for spaces and proper-cases a string",
+        "description": "Substitutes underscores for spaces and proper-cases a string",
         "tags": [
           {
             "title": "public",
@@ -941,12 +941,13 @@
       "valid": true
     },
     {
-      "name": "removeEmojis",
+      "name": "scrubEmojis",
       "params": [
-        "text"
+        "text",
+        "replacementChars"
       ],
       "docs": {
-        "description": "Removes emojis from a string of text",
+        "description": "Replaces emojis in a string.",
         "tags": [
           {
             "title": "public",
@@ -955,7 +956,7 @@
           },
           {
             "title": "example",
-            "description": "removeEmojis('Dove🕊️⭐ 29')"
+            "description": "scrubEmojis('Dove🕊️⭐ 29')"
           },
           {
             "title": "function",
@@ -970,6 +971,15 @@
               "name": "string"
             },
             "name": "text"
+          },
+          {
+            "title": "param",
+            "description": "Characters that replace the emojis",
+            "type": {
+              "type": "NameExpression",
+              "name": "string"
+            },
+            "name": "replacementChars"
           },
           {
             "title": "returns",

@@ -22,7 +22,12 @@ import {
   splitKeys,
   toArray,
 } from '../src';
-import { getCharCodes, removeEmojis, removeWeirdSpaces } from '../src/Adaptor';
+import {
+  getCharCodes,
+  removeEmojis,
+  removeWeirdSpaces,
+  scrubEmojis,
+} from '../src/Adaptor';
 
 describe('execute', () => {
   it('executes each operation in sequence', done => {
@@ -291,38 +296,38 @@ describe('splitKeys', function () {
   });
 });
 
-describe('removeEmojis', function () {
+describe('scrubEmojis', function () {
   it('should remove the dove and the star', function () {
     const withEmojis = 'This is a dove🕊️⭐_29 Jul 2021';
-    const withoutEmojis = 'This is a dove_29 Jul 2021';
-    assert.equal(removeEmojis(withEmojis), withoutEmojis);
+    const withoutEmojis = 'This is a dove���_29 Jul 2021';
+    assert.equal(scrubEmojis(withEmojis), withoutEmojis);
   });
 
   it('should remove the dove', function () {
     const withEmoji = 'This is a dove🕊️_29 Jul 2021';
-    const withoutEmoji = 'This is a dove_29 Jul 2021';
-    assert.equal(removeEmojis(withEmoji), withoutEmoji);
+    const withoutEmoji = 'This is a dove��_29 Jul 2021';
+    assert.equal(scrubEmojis(withEmoji), withoutEmoji);
   });
 
   it('should remove the star', function () {
     const withEmoji = 'This is a star⭐_29 Jul 2021';
-    const withoutEmoji = 'This is a star_29 Jul 2021';
-    assert.equal(removeEmojis(withEmoji), withoutEmoji);
+    const withoutEmoji = 'This is a star�_29 Jul 2021';
+    assert.equal(scrubEmojis(withEmoji), withoutEmoji);
   });
 
   it('should remove the emoji and the variant code', function () {
     const withEmoji = 'This is a star⭐ ️ 2021-07-29';
-    const withoutEmoji = 'This is a star  2021-07-29';
-    assert.equal(removeEmojis(withEmoji), withoutEmoji);
+    const withoutEmoji = 'This is a star� � 2021-07-29';
+    assert.equal(scrubEmojis(withEmoji), withoutEmoji);
   });
 
   it("should return input if input doesn't have emojis", function () {
     const withoutEmojis = 'This is a dove_29 Jul 2021';
-    assert.equal(removeEmojis(withoutEmojis), withoutEmojis);
+    assert.equal(scrubEmojis(withoutEmojis), withoutEmojis);
   });
 
   it('should return input if input is falsy', function () {
     const noText = undefined;
-    assert.equal(removeEmojis(noText), noText);
+    assert.equal(scrubEmojis(noText), noText);
   });
 });

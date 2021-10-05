@@ -903,7 +903,7 @@
         "str"
       ],
       "docs": {
-        "description": "Subsitutes underscores for spaces and proper-cases a string",
+        "description": "Substitutes underscores for spaces and proper-cases a string",
         "tags": [
           {
             "title": "public",
@@ -947,7 +947,7 @@
         "replacementChars"
       ],
       "docs": {
-        "description": "Replaces emojis in a string with other replacement characters given as input.",
+        "description": "Replaces emojis in a string.",
         "tags": [
           {
             "title": "public",
@@ -974,7 +974,7 @@
           },
           {
             "title": "param",
-            "description": "Characters that replaces the emojis",
+            "description": "Characters that replace the emojis",
             "type": {
               "type": "NameExpression",
               "name": "string"

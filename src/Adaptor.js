@@ -442,7 +442,7 @@ export function composeNextState(state, response) {
 }
 
 /**
- * Subsitutes underscores for spaces and proper-cases a string
+ * Substitutes underscores for spaces and proper-cases a string
  * @public
  * @example
  * field("destination_string__c", humanProper(state.data.path_to_string))
@@ -476,22 +476,27 @@ export function splitKeys(obj, keys) {
 }
 
 /**
- * Replaces emojis in a string with other replacement characters given as input.
+ * Replaces emojis in a string.
  * @public
  * @example
  * scrubEmojis('Dove🕊️⭐ 29')
  * @function
  * @param {string} text - String that needs to be cleaned
- * @param {string} replacementChars - Characters that replaces the emojis
+ * @param {string} replacementChars - Characters that replace the emojis
  * @returns {string}
  */
 export function scrubEmojis(text, replacementChars) {
   if (!text) return text;
   if (!replacementChars) replacementChars = '\uFFFD';
+
   if (replacementChars == '')
     console.warn(
-      "Removing characters from a string may create injection vulnerabilities. It's better to replace than remove. See http://www.unicode.org/reports/tr36/#Deletion_of_Noncharacters"
+      'Removing characters from a string may create injection vulnerabilities;',
+      "It's better to replace than remove.",
+      'See https://www.unicode.org/reports/tr36/#Deletion_of_Noncharacters'
     );
+
   const emojisPattern = /(\uFE0F|\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+
   return text.replace(emojisPattern, replacementChars);
 }

@@ -476,22 +476,22 @@ export function splitKeys(obj, keys) {
 }
 
 /**
- * Removes emojis from a string of text by replacing them with a replacement characters
+ * Replaces emojis in a string with other replacement characters given as input.
  * @public
  * @example
  * scrubEmojis('Dove🕊️⭐ 29')
  * @function
  * @param {string} text - String that needs to be cleaned
- * @param {string} replacementChar - Character that replaces emojis
+ * @param {string} replacementChars - Characters that replaces the emojis
  * @returns {string}
  */
-export function scrubEmojis(text, replacementChar) {
+export function scrubEmojis(text, replacementChars) {
   if (!text) return text;
-  if (!replacementChar) replacementChar = '\uFFFD';
-  if ((replacementChar = ''))
+  if (!replacementChars) replacementChars = '\uFFFD';
+  if (replacementChars == '')
     console.warn(
-      "Removing characters from a string may create injection vulnerabilities. It's better to replace than remove."
+      "Removing characters from a string may create injection vulnerabilities. It's better to replace than remove. See http://www.unicode.org/reports/tr36/#Deletion_of_Noncharacters"
     );
   const emojisPattern = /(\uFE0F|\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
-  return text.replace(emojisPattern, replacementChar);
+  return text.replace(emojisPattern, replacementChars);
 }

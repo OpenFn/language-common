@@ -306,7 +306,7 @@ describe('scrubEmojis', function () {
   it('should remove the dove', function () {
     const withEmoji = 'This is a dove🕊️_29 Jul 2021';
     const withoutEmoji = 'This is a dove��_29 Jul 2021';
-    assert.equal(unescape(scrubEmojis(withEmoji)), withoutEmoji);
+    assert.equal(scrubEmojis(withEmoji), withoutEmoji);
   });
 
   it('should remove the star', function () {

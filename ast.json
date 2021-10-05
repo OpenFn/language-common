@@ -944,10 +944,10 @@
       "name": "scrubEmojis",
       "params": [
         "text",
-        "replacementChar"
+        "replacementChars"
       ],
       "docs": {
-        "description": "Removes emojis from a string of text by replacing them with a replacement characters",
+        "description": "Replaces emojis in a string with other replacement characters given as input.",
         "tags": [
           {
             "title": "public",
@@ -974,12 +974,12 @@
           },
           {
             "title": "param",
-            "description": "Character that replaces emojis",
+            "description": "Characters that replaces the emojis",
             "type": {
               "type": "NameExpression",
               "name": "string"
             },
-            "name": "replacementChar"
+            "name": "replacementChars"
           },
           {
             "title": "returns",

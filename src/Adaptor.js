@@ -2,6 +2,7 @@ import { curry, fromPairs } from 'lodash/fp';
 import { JSONPath } from 'jsonpath-plus';
 export * as beta from './beta';
 export * as http from './http';
+export * as dateFns from './dateFns';
 
 /**
  * Execute a sequence of operations.
@@ -500,3 +501,4 @@ export function scrubEmojis(text, replacementChars) {
 
   return text.replace(emojisPattern, replacementChars);
 }
+

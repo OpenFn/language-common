@@ -330,4 +330,10 @@ describe('scrubEmojis', function () {
     const noText = undefined;
     assert.equal(scrubEmojis(noText), noText);
   });
+
+  it('should replace the dove with empty string', function () {
+    const withEmoji = 'This is a dove🕊️_29 Jul 2021';
+    const withoutEmoji = 'This is a dove_29 Jul 2021';
+    assert.equal(scrubEmojis(withEmoji, ''), withoutEmoji);
+  });
 });

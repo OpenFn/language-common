@@ -335,7 +335,8 @@ export function expandReferences(value, skipFilter) {
  * @returns {<Field>}
  */
 export function field(key, value) {
-  return [key, value];
+  const expandedKey = expandReferences(key)(state);
+  return [expandedKey, value];
 }
 
 /**

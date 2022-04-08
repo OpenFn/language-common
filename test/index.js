@@ -337,3 +337,11 @@ describe('scrubEmojis', function () {
     assert.equal(scrubEmojis(withEmoji, ''), withoutEmoji);
   });
 });
+
+describe('chunk', function () {
+  it('should chunk an array into an array of arrays with the desired size', function () {
+    const original = [1, 2, 3, 46];
+    const desired = [[1, 2], [3, 4], [5]];
+    assert.equal(chunk(original), desired);
+  });
+});

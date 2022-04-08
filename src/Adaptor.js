@@ -500,3 +500,20 @@ export function scrubEmojis(text, replacementChars) {
 
   return text.replace(emojisPattern, replacementChars);
 }
+
+/**
+ * Chunks an array into an array of arrays, each with no more than a certain size.
+ * @public
+ * @example
+ * chunk([1,2,3,4,5], 2)
+ * @function
+ * @param {Object} array - Array to be chunked
+ * @param {Integer} chunkSize - The maxiumum size of each chunks
+ * @returns {Object}
+ */
+export function chunk(array, chunkSize) {
+  const output = [];
+  for (var i = 0, len = array.length; i < len; i += chunkSize)
+    output.push(array.slice(i, i + chunkSize));
+  return output;
+}

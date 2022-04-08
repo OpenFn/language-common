@@ -50,6 +50,7 @@
   "homepage": "https://github.com/OpenFn/language-common#readme",
   "bundledDependencies": [
     "axios",
+    "date-fns",
     "jsonpath-plus",
     "lodash"
   ]

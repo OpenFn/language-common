@@ -1047,6 +1047,41 @@
       "valid": true
     },
     {
+      "name": "exit",
+      "params": [
+        "code"
+      ],
+      "docs": {
+        "description": "Allows to exit a job with a custom code.",
+        "tags": [
+          {
+            "title": "public",
+            "description": null,
+            "type": null
+          },
+          {
+            "title": "example",
+            "description": "exit(42)"
+          },
+          {
+            "title": "function",
+            "description": null,
+            "name": null
+          },
+          {
+            "title": "param",
+            "description": "Code to exit with.",
+            "type": {
+              "type": "NameExpression",
+              "name": "Integer"
+            },
+            "name": "code"
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
       "name": "map",
       "params": [
         "path",

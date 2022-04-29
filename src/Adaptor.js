@@ -517,3 +517,15 @@ export function chunk(array, chunkSize) {
     output.push(array.slice(i, i + chunkSize));
   return output;
 }
+
+/**
+ * Allows to exit a job with a custom code.
+ * @public
+ * @example
+ * exit(42)
+ * @function
+ * @param {Integer} code - Code to exit with.
+ */
+export function exit(code) {
+  process.exit(code);
+}

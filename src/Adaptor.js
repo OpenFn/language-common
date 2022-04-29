@@ -56,6 +56,19 @@ export function fn(func) {
 }
 
 /**
+ * Allows authors to exit jobs at any time with an arbitrary exit code.
+ * @public
+ * @example
+ * exit(42);
+ * @function
+ * @param {Integer} code is the exit code
+ * @returns {<Operation>}
+ */
+export function exit(code) {
+  return () => process.exit(code);
+}
+
+/**
  * Picks out a single value from source data.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.

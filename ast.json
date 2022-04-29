@@ -79,6 +79,41 @@
       "valid": true
     },
     {
+      "name": "exit",
+      "params": [
+        "code"
+      ],
+      "docs": {
+        "description": "Allows authors to exit jobs at any time with an arbitrary exit code.",
+        "tags": [
+          {
+            "title": "public",
+            "description": null,
+            "type": null
+          },
+          {
+            "title": "example",
+            "description": "exit(42);"
+          },
+          {
+            "title": "function",
+            "description": null,
+            "name": null
+          },
+          {
+            "title": "param",
+            "description": "is the exit code",
+            "type": {
+              "type": "NameExpression",
+              "name": "Integer"
+            },
+            "name": "code"
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
       "name": "sourceValue",
       "params": [
         "path"

@@ -519,7 +519,7 @@ export function chunk(array, chunkSize) {
 }
 
 /**
- * Allows to exit a job with a custom code.
+ * Allows authors to exit jobs at any time with an arbitrary exit code.
  * @public
  * @example
  * exit(42)

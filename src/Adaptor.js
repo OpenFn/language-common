@@ -73,6 +73,21 @@ export function sourceValue(path) {
 }
 
 /**
+ * Picks out a single value from source data.
+ * If a JSONPath returns more than one value for the reference, the first
+ * item will be returned.
+ * @public
+ * @example
+ * jsonSourceValue('$.key', $)
+ * @function
+ * @param {String} path - JSONPath referencing a point in give JSON object.
+ * @returns {<Operation>}
+ */
+ export function jsonSourceValue(path, json) {
+    return JSONPath({ path, json })[0];
+}
+
+/**
  * Picks out a value from source data.
  * Will return whatever JSONPath returns, which will always be an array.
  * If you need a single value use `sourceValue` instead.

@@ -56,6 +56,22 @@ export function fn(func) {
 }
 
 /**
+ * Picks out a single value from a JSON object.
+ * If a JSONPath returns more than one value for the reference, the first
+ * item will be returned.
+ * @public
+ * @example
+ * jsonValue({ a:1 }, 'a')
+ * @function
+ * @param {object} obj - A valid JSON object.
+ * @param {String} path - JSONPath referencing a point in given JSON object.
+ * @returns {<Operation>}
+ */
+export function jsonValue(obj, path) {
+  return JSONPath({ path, json: obj })[0];
+}
+
+/**
  * Picks out a single value from source data.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.

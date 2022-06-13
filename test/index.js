@@ -14,6 +14,7 @@ import {
   fields,
   index,
   join,
+  jsonValue,
   lastReferenceValue,
   map,
   merge,
@@ -54,6 +55,20 @@ describe('execute', () => {
     let finalState = await execute()(state);
 
     expect(finalState).to.eql(state);
+  });
+});
+
+describe('jsonValue', function () {
+  it('should return the first value at a JSON path if it exists, or undefined', function () {
+    const input = { a: { b: { c: 1, e: '' } } };
+
+    const desired1 = 1;
+    const desired2 = undefined;
+    const desired3 = '';
+
+    assert.equal(jsonValue(input, 'a.b.c'), desired1);
+    assert.equal(jsonValue(input, 'a.d.c'), desired2);
+    assert.equal(jsonValue(input, 'a.b.e'), desired3);
   });
 });
 

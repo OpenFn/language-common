@@ -61,7 +61,7 @@ export function fn(func) {
  * item will be returned.
  * @public
  * @example
- * jsonValue('$.key', $)
+ * jsonValue({ a:1 }, 'a')
  * @function
  * @param {object} obj - A valid JSON object.
  * @param {String} path - JSONPath referencing a point in given JSON object.

@@ -3,6 +3,7 @@ import testData from './testData';
 
 import {
   arrayToString,
+  chunk,
   combine,
   dataPath,
   dataValue,
@@ -17,17 +18,12 @@ import {
   map,
   merge,
   referencePath,
+  scrubEmojis,
   source,
   sourceValue,
   splitKeys,
   toArray,
-} from '../src';
-import {
-  getCharCodes,
-  removeEmojis,
-  removeWeirdSpaces,
-  scrubEmojis,
-} from '../src/Adaptor';
+} from '../';
 
 describe('execute', () => {
   it('executes each operation in sequence', done => {
@@ -264,7 +260,7 @@ describe('arrayToString', function () {
   });
 
   it('does not require a separator', function () {
-    expect(arrayToString([1, 2, 3])).to.eql('123');
+    expect(arrayToString([1, 2, 3])).to.eql('1,2,3');
   });
 });
 
@@ -340,8 +336,9 @@ describe('scrubEmojis', function () {
 
 describe('chunk', function () {
   it('should chunk an array into an array of arrays with the desired size', function () {
-    const original = [1, 2, 3, 46];
+    const original = [1, 2, 3, 4, 5];
     const desired = [[1, 2], [3, 4], [5]];
-    assert.equal(chunk(original), desired);
+
+    assert.deepEqual(chunk(original, 2), desired);
   });
 });

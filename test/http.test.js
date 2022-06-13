@@ -1,7 +1,6 @@
 import nock from 'nock';
 import { expect } from 'chai';
-
-import { http } from '../src';
+import { http } from '../';
 
 describe('post', () => {
   before(() => {

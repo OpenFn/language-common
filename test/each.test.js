@@ -75,7 +75,6 @@ describe('each', () => {
   });
 
   describe('beta', function () {
-    console.log(beta);
     shouldBehaveLikeEach(beta.each);
   });
 });

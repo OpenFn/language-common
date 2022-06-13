@@ -94,7 +94,7 @@
           },
           {
             "title": "example",
-            "description": "jsonValue('$.key', $)"
+            "description": "jsonValue({ a:1 }, 'a')"
           },
           {
             "title": "function",

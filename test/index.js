@@ -94,7 +94,6 @@ describe('map', () => {
     let results = map(
       '$.data.store.book[*]',
       function (state) {
-        console.log('hello');
         // console.log(JSON.stringify( state ));
         // items.push( { title: sourceValue("$.data.title", state) } )
         return { references: [1, ...state.references], ...state };

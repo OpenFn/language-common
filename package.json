@@ -1,6 +1,6 @@
 {
   "name": "@openfn/language-common",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "description": "Common Expressions for OpenFn",
   "main": "lib/Adaptor.js",
   "scripts": {

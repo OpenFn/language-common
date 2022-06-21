@@ -5,7 +5,7 @@
     "strictNullChecks": true,
     "noImplicitAny": false,
 		"resolveJsonModule": true,
-    "removeComments": true,
+    "removeComments": false,
     "preserveConstEnums": true,
     "esModuleInterop": true,
     "sourceMap": true

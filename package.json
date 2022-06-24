@@ -19,14 +19,14 @@
   "jsdelivr": "dist/index.umd.js",
   "umd:main": "dist/index.umd.js",
   "exports": {
-    ".": [
-      {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs",
-        "default": "./dist/index.js"
+    ".": {
+      "import": {
+        "default": "./dist/index.mjs",
+        "types": "./dist/index.d.ts"
       },
-      "./dist/index.js"
-    ]
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -37,6 +37,7 @@
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
     "@babel/register": "^7.9.0",
+    "@microsoft/api-extractor": "^7.26.0",
     "@openfn/simple-ast": "^0.3.2",
     "@types/mocha": "^8.2.3",
     "chai": "^4.2.0",
@@ -44,6 +45,7 @@
     "mocha": "^7.1.0",
     "nock": "^13.0.5",
     "rollup": "^2.53.1",
+    "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "sinon": "^9.2.3",
@@ -55,7 +57,10 @@
     "dist": "dist",
     "types": "types"
   },
-	"files": ["dist", "types"],
+  "files": [
+    "dist",
+    "types"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OpenFn/language-common.git"
@@ -69,5 +74,10 @@
     "jsonpath-plus",
     "lodash"
   ],
-  "license": "LGPL-3.0-or-later"
+  "license": "LGPL-3.0-or-later",
+  "bundleDependencies": [
+    "axios",
+    "jsonpath-plus",
+    "lodash"
+  ]
 }

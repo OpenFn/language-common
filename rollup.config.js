@@ -1,9 +1,10 @@
 // @ts-check
 
-import { terser } from "rollup-plugin-terser";
-import typescript2 from "rollup-plugin-typescript2";
+import { terser } from 'rollup-plugin-terser';
+import typescript2 from 'rollup-plugin-typescript2';
+import dts from 'rollup-plugin-dts';
 
-import pkg from "./package.json";
+import pkg from './package.json';
 
 /**
  * Comment with library information to be appended in the generated bundles.
@@ -23,43 +24,44 @@ const banner = `/*!
 function createOutputOptions(options) {
   return {
     banner,
-    name: "kiini",
-    exports: "named",
+    name: 'kiini',
+    exports: 'named',
     sourcemap: true,
     ...options,
   };
 }
 
+console.log(pkg.exports['.']);
 /**
  * @type {Array<import('rollup').RollupOptions>}
  */
 const options = [
   {
-    input: "./src/index.ts",
+    input: './src/index.ts',
     output: [
       createOutputOptions({
-        file: "./dist/index.js",
-        format: "commonjs",
+        file: './dist/index.js',
+        format: 'commonjs',
       }),
       createOutputOptions({
-        file: "./dist/index.cjs",
-        format: "commonjs",
+        file: './dist/index.cjs',
+        format: 'commonjs',
       }),
       createOutputOptions({
-        file: "./dist/index.mjs",
-        format: "esm",
+        file: './dist/index.mjs',
+        format: 'esm',
       }),
       createOutputOptions({
-        file: "./dist/index.esm.js",
-        format: "esm",
+        file: './dist/index.esm.js',
+        format: 'esm',
       }),
       createOutputOptions({
-        file: "./dist/index.umd.js",
-        format: "umd",
+        file: './dist/index.umd.js',
+        format: 'umd',
       }),
       createOutputOptions({
-        file: "./dist/index.umd.min.js",
-        format: "umd",
+        file: './dist/index.umd.min.js',
+        format: 'umd',
         plugins: [terser()],
       }),
     ],
@@ -67,9 +69,15 @@ const options = [
       typescript2({
         clean: true,
         useTsconfigDeclarationDir: true,
-        tsconfig: "./tsconfig.bundle.json",
+        tsconfig: './tsconfig.bundle.json',
       }),
     ],
+  },
+  {
+    input: './types/index.d.ts',
+    output: [{ file: pkg.exports['.'].import.types, format: 'esm' }],
+    plugins: [dts()],
+    external: [],
   },
 ];
 

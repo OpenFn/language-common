@@ -1,5 +1,6 @@
 import { JSONPath } from 'jsonpath-plus';
-export * as http from './http';
+import * as http from './http';
+export { http };
 
 export interface State {
   configuration: object;

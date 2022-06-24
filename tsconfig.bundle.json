@@ -12,7 +12,8 @@
     "declaration": true,
     "declarationDir": "types/",
     "declarationMap": true,
-    "outDir": "dist/"
+    "outDir": "dist/",
+    "emitDeclarationOnly": true
   },
   "exclude": [
     "./src/**/*.test.ts"

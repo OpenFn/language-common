@@ -1,7 +1,8 @@
 import { expandReferences, splitKeys, State } from './';
 import axios from 'axios';
 import https from 'https';
-exports.axios = axios;
+
+export { axios };
 
 /**
  * Recursively resolves objects that have resolvable values (functions), but
@@ -27,7 +28,7 @@ export function expandRequestReferences(params) {
   const skipFormData = value => {
     // NOTE: no expansion is possible on a `FormData` module w/ streams.
     if (typeof value == 'object' && value?.data?._streams) return true;
-		return false;
+    return false;
   };
 
   return state => {

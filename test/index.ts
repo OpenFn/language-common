@@ -98,19 +98,21 @@ describe('map', () => {
 });
 
 describe('combine', () => {
-  let state = {};
+  let state = { configuration: {}, data: {} };
   let operations = [
     state => {
-      return { hello: 1 };
+      return { ...state, hello: 1 };
     },
     state => {
-      return { hello: state.hello + 5 };
+      return { ...state, hello: state.hello + 5 };
     },
   ];
 
-  it('accepts serveral operations, and reduces them with the state', () => {
-    let result = combine.apply(null, operations)(state);
-    expect(result).to.eql({ hello: 6 });
+  it('accepts serveral operations, and reduces them with the state', async () => {
+    let result = await combine(...operations)(state);
+    console.log(result);
+
+    expect(result).to.eql({ data: {}, configuration: {}, hello: 6 });
   });
 });
 
@@ -154,14 +156,14 @@ describe('expandReferences', () => {
   });
 
   it("doesn't affect empty objects", () => {
-		// @ts-ignore
+    // @ts-ignore
     let result = expandReferences({})(1);
 
     expect(result).to.eql({});
-		// @ts-ignore
+    // @ts-ignore
     result = expandReferences([])(1);
     expect(result).to.eql([]);
-		// @ts-ignore
+    // @ts-ignore
     result = expandReferences(null)(1);
     expect(result).to.eql(null);
     // @ts-ignore

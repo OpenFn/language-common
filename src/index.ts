@@ -244,26 +244,28 @@ export function each(dataSource: DataSource, operation: Function): Operation {
   };
 }
 
-/**
- * Scopes an array of data based on a JSONPath.
- * Useful when the source data has `n` items you would like to map to
- * an operation.
- * The operation will receive a slice of the data based of each item
- * of the JSONPath provided.
- *
- * It also ensures the results of an operation make their way back into
- * the state's references.
- * @example
- *  each("$.[*]",
- *    create("SObject",
- *    field("FirstName", sourceValue("$.firstName")))
- *  )
- * @param dataSource - JSONPath referencing a point in `state`.
- * @param operation - The operation needed to be repeated.
- */
-
-export const beta = {
-  each: (dataSource: DataSource, operation: Operation): Operation => {
+export namespace beta {
+  /**
+   * Scopes an array of data based on a JSONPath.
+   * Useful when the source data has `n` items you would like to map to
+   * an operation.
+   * The operation will receive a slice of the data based of each item
+   * of the JSONPath provided.
+   *
+   * It also ensures the results of an operation make their way back into
+   * the state's references.
+   * @example
+   *  each("$.[*]",
+   *    create("SObject",
+   *    field("FirstName", sourceValue("$.firstName")))
+   *  )
+   * @param dataSource - JSONPath referencing a point in `state`.
+   * @param operation - The operation needed to be repeated.
+   */
+  export function each(
+    dataSource: DataSource,
+    operation: Operation
+  ): Operation {
     if (!dataSource) {
       throw new TypeError('dataSource argument for each operation is invalid.');
     }
@@ -291,8 +293,8 @@ export const beta = {
         return { ...nextState, data: prevState.data };
       }
     };
-  },
-};
+  }
+}
 
 /**
  * Combines two operations into one
@@ -460,7 +462,7 @@ export function index(): Selector<number | undefined> {
  * @param separator - Separator string.
  */
 export function arrayToString(arr: any[], separator: string): string[] {
-  return Array.apply(null, arr).join(separator);
+  return Array.apply(null, arr).join(separator || '');
 }
 
 /**

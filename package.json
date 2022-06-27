@@ -16,7 +16,6 @@
   },
   "author": "Open Function Group",
   "main": "dist/index.cjs",
-  "type": "module",
   "exports": {
     ".": {
       "import": {

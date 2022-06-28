@@ -66,6 +66,21 @@ export function fn(func: Operation): Operation {
 }
 
 /**
+ * Picks out a single value from a JSON object.
+ * If a JSONPath returns more than one value for the reference, the first
+ * item will be returned.
+ * @public
+ * @example
+ * jsonValue({ a:1 }, 'a')
+ * @function
+ * @param {object} obj - A valid JSON object.
+ * @param {String} path - JSONPath referencing a point in given JSON object.
+ */
+export function jsonValue(obj: {}, path: string): Array<String | Object> {
+  return JSONPath({ path, json: obj })[0];
+}
+
+/**
  * Picks out a single value from source data.
  * If a JSONPath returns more than one value for the reference, the first
  * item will be returned.
@@ -308,17 +323,6 @@ export namespace beta {
  */
 export function combine(...operations: Array<Operation>): Operation {
   return execute(...operations);
-  // return state => {
-  //   return operations.reduce((state, operation) => {
-  //     if (state.then) {
-  //       return state.then(state => {
-  //         return { ...state, ...operation(state) };
-  //       });
-  //     } else {
-  //       return { ...state, ...operation(state) };
-  //     }
-  //   }, state);
-  // };
 }
 
 /**
@@ -524,4 +528,46 @@ export function splitKeys(obj: object, keys: string[]) {
     },
     [{}, {}]
   );
+}
+
+/**
+ * Replaces emojis in a string.
+ * @public
+ * @example
+ * scrubEmojis('Dove🕊️⭐ 29')
+ * @function
+ * @param {string} text - String that needs to be cleaned
+ * @param {string} replacementChars - Characters that replace the emojis
+ * @returns {string}
+ */
+export function scrubEmojis(text: string, replacementChars: string): string {
+  if (!text) return text;
+  if (replacementChars == '') {
+    console.warn(
+      'Removing characters from a string may create injection vulnerabilities;',
+      "It's better to replace than remove.",
+      'See https://www.unicode.org/reports/tr36/#Deletion_of_Noncharacters'
+    );
+  } else if (!replacementChars) replacementChars = '\uFFFD';
+
+  const emojisPattern =
+    /(\uFE0F|\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g;
+
+  return text.replace(emojisPattern, replacementChars);
+}
+
+/**
+ * Chunks an array into an array of arrays, each with no more than a certain size.
+ * @public
+ * @example
+ * chunk([1,2,3,4,5], 2)
+ * @function
+ * @param {Object} array - Array to be chunked
+ * @param {Integer} chunkSize - The maxiumum size of each chunks
+ */
+export function chunk(array: any[], chunkSize: number) {
+  const output: any[][] = [];
+  for (var i = 0, len = array.length; i < len; i += chunkSize)
+    output.push(array.slice(i, i + chunkSize));
+  return output;
 }

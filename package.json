@@ -6,8 +6,8 @@
     "build": "npm exec tsm build.ts",
     "build:all": "npm run clean && npm run build",
     "clean": "rimraf dist/ types/",
-    "test": "mocha --require tsm test/*.ts",
-    "test:watch": "mocha -w --require tsm test/*.ts",
+    "test": "mocha -r tsm test/*.ts",
+    "test:watch": "mocha -r tsm --watch-files test --watch test/*.ts",
     "ast": "simple-ast --adaptor ./dist/index.js --output ast.json",
     "postversion": "git push && git push --tags",
     "version": "npm run build && git add -A lib ast.json"

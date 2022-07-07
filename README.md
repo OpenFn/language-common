@@ -10,5 +10,5 @@ Clone the repo, run `npm install`.
 
 Run tests using `npm run test` or `npm run test:watch`
 
-Build the project using `make`.
+Build the project using `npm run build`.
 

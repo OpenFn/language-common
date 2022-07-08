@@ -1,8 +1,10 @@
 import { JSONPath } from 'jsonpath-plus';
 import * as http from './http';
-import dateFns from './date-fns';
 
-export { http, dateFns };
+import * as dateFns from "./date-fns"
+export { dateFns }
+
+export { http };
 
 export interface State {
   configuration: object;

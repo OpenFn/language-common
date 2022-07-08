@@ -39,7 +39,7 @@ function bundleTypeDefinitions(filename: string, outfile: string) {
     configObject: {
       projectFolder: absPath('.'),
       mainEntryPointFilePath: filename,
-      bundledPackages: [],
+      bundledPackages: ["axios", "date-fns"],
       compiler: {
         tsconfigFilePath: 'tsconfig.bundle.json',
         overrideTsconfig: {
@@ -50,7 +50,7 @@ function bundleTypeDefinitions(filename: string, outfile: string) {
       },
       dtsRollup: {
         enabled: true,
-        untrimmedFilePath: outfile,
+        untrimmedFilePath: outfile
       },
       tsdocMetadata: {
         enabled: false,

@@ -1,6 +1,6 @@
 {
   "name": "@openfn/language-common",
-  "version": "2.0.0-pre1",
+  "version": "2.0.0-rc2",
   "description": "Common Expressions for OpenFn",
   "scripts": {
     "build": "npm exec tsm build.ts",
@@ -27,7 +27,8 @@
         "types": "./dist/language-common.d.ts"
       },
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.28.3",

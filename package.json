@@ -1,6 +1,6 @@
 {
   "name": "@openfn/language-common",
-  "version": "2.0.0-rc2",
+  "version": "2.0.0-rc3",
   "description": "Common Expressions for OpenFn",
   "scripts": {
     "build": "npm exec tsm build.ts",
@@ -31,7 +31,7 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.28.3",
+    "@microsoft/api-extractor": "^7.29.0",
     "@openfn/simple-ast": "^0.3.2",
     "@types/mocha": "^8.2.3",
     "@types/node": "^18.0.0",
@@ -42,7 +42,7 @@
     "dts-bundle-generator": "^6.12.0",
     "esbuild": "^0.14.47",
     "execa": "^6.1.0",
-    "jsonpath-plus": "^4.0.0",
+    "jsonpath-plus": "^7.0.0",
     "mocha": "^7.1.0",
     "nock": "^13.0.5",
     "rimraf": "^3.0.2",

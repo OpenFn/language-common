@@ -533,3 +533,19 @@ export function chunk(array, chunkSize) {
     output.push(array.slice(i, i + chunkSize));
   return output;
 }
+
+/**
+ * Deduplicates an array of objects by a unique attribute
+ * @public
+ * @example
+ * dedupArrayOfObjects([{a:1}, {b:2}, {a:1, b:2}], 'a')
+ * @function
+ * @param {Object} array - Array of objects to be deduplicated
+ * @param {Integer} uid - The attribute name on which to deduplicate
+ * @returns {Object}
+ */
+export function dedupArrayOfObjects(array, uid) {
+  return Array.from(new Set(array.map(a => a[uid]))).map(id => {
+    return array.find(a => a[uid] === id);
+  });
+}

@@ -1,5 +1,9 @@
-Language Common [![CircleCI](https://circleci.com/gh/OpenFn/language-common.svg?style=svg)](https://circleci.com/gh/OpenFn/language-common)
-===============
+# _⚠️ MOVED TO [OpenFn/adaptors](https://github.com/OpenFn/adaptors)! ⚠️_
+
+**N.B.: New versions are available at:
+https://github.com/OpenFn/adaptors/tree/main/packages/common**
+
+# Language Common (Archived)
 
 Common and generic expressions and operations for [OpenFn](http://openfn.org).
 
